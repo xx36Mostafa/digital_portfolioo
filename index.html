@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ar" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio of [Your Name] - Full Stack Developer">
+    <meta property="og:title" content="[Your Name] - Portfolio">
+    <meta property="og:description" content="Full Stack Developer Portfolio">
+    <meta property="og:type" content="website">
+
+    <title>[Your Name] - Portfolio</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="styles/globals.css">
+    <link rel="stylesheet" href="styles/navbar.css">
+    <link rel="stylesheet" href="styles/hero.css">
+    <link rel="stylesheet" href="styles/about.css">
+    <link rel="stylesheet" href="styles/skills.css">
+    <link rel="stylesheet" href="styles/experience.css">
+    <link rel="stylesheet" href="styles/projects.css">
+    <link rel="stylesheet" href="styles/contact.css">
+    <link rel="stylesheet" href="styles/footer.css">
+</head>
+
+<body>
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">
+                <span class="gradient-text">&lt;YourName/&gt;</span>
+            </a>
+
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#skills" class="nav-link">Skills</a></li>
+                <li><a href="#experience" class="nav-link">Experience</a></li>
+                <li><a href="#education" class="nav-link">Education</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+
+            <div class="nav-buttons">
+                <a href="#contact" class="btn btn-primary">Contact Me</a>
+                <a href="#projects" class="btn btn-outline">View My Work</a>
+            </div>
+
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-background">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+
+        <div class="hero-content">
+            <h1 class="hero-title">
+                Hi, I'm <span class="gradient-text typing-text" id="typing-name">[Your Name]</span>
+            </h1>
+            <p class="hero-subtitle" id="typing-subtitle"></p>
+            <p class="hero-tagline">
+                Building innovative solutions with modern technologies.<br>
+                Passionate about creating exceptional digital experiences.
+            </p>
+
+            <div class="social-links">
+                <a href="https://github.com/yourusername" target="_blank" class="social-icon" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/yourusername" target="_blank" class="social-icon"
+                    aria-label="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://wa.me/yourphonenumber" target="_blank" class="social-icon" aria-label="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="mailto:your.email@example.com" class="social-icon" aria-label="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+
+            <a href="#about" class="btn btn-hero">Learn More About Me</a>
+
+            <div class="scroll-indicator">
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+                <p>Scroll Down</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about section">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text">
+                    <h2 class="section-title">About Me</h2>
+                    <div class="about-content">
+                        <p>
+                            Hello! I'm a passionate Full Stack Developer with expertise in building modern web
+                            applications.
+                            I love turning complex problems into simple, beautiful, and intuitive solutions.
+                        </p>
+                        <p>
+                            With several years of experience in the tech industry, I've worked on diverse projects
+                            ranging
+                            from e-commerce platforms to AI-powered applications. My goal is to create impactful digital
+                            experiences that make a difference.
+                        </p>
+                        <p>
+                            When I'm not coding, you can find me exploring new technologies, contributing to open-source
+                            projects, or sharing knowledge with the developer community.
+                        </p>
+
+                        <div class="about-info">
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Cairo, Egypt</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-briefcase"></i>
+                                <span>5+ Years Experience</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>your.email@example.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="about-image">
+                    <div class="image-wrapper">
+                        <img src="https://via.placeholder.com/400" alt="Profile Picture">
+                    </div>
+
+                    <div class="about-cards">
+                        <div class="about-card">
+                            <h3>What I Do</h3>
+                            <ul>
+                                <li><i class="fas fa-check"></i> Full Stack Development</li>
+                                <li><i class="fas fa-check"></i> UI/UX Design</li>
+                                <li><i class="fas fa-check"></i> API Development</li>
+                                <li><i class="fas fa-check"></i> Database Design</li>
+                            </ul>
+                        </div>
+
+                        <div class="about-card">
+                            <h3>Key Services</h3>
+                            <ul>
+                                <li><i class="fas fa-check"></i> Web Application Development</li>
+                                <li><i class="fas fa-check"></i> Mobile App Development</li>
+                                <li><i class="fas fa-check"></i> Technical Consulting</li>
+                                <li><i class="fas fa-check"></i> Code Review & Optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="skills section">
+        <div class="container">
+            <h2 class="section-title">
+                My Skills
+                <span class="title-underline"></span>
+            </h2>
+
+            <div class="skills-grid" id="skills-grid">
+                <!-- Skills will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section id="experience" class="experience section">
+        <div class="container">
+            <h2 class="section-title">Work Experience</h2>
+
+            <div class="timeline" id="timeline">
+                <!-- Experience items will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Section -->
+    <section id="education" class="education section">
+        <div class="container">
+            <h2 class="section-title">Education & Certifications</h2>
+
+            <div class="education-grid">
+                <div class="education-card">
+                    <div class="education-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Bachelor of Computer Science</h3>
+                    <p class="education-university">Cairo University</p>
+                    <p class="education-date">2015 - 2019</p>
+                    <p class="education-description">
+                        Graduated with honors. Focused on software engineering, algorithms, and artificial intelligence.
+                    </p>
+                </div>
+
+                <div class="certifications">
+                    <h3 class="certifications-title">Certifications</h3>
+                    <div class="certification-item" style="--cert-color: #6366f1;">
+                        <h4>AWS Certified Solutions Architect</h4>
+                        <p>Amazon Web Services</p>
+                    </div>
+                    <div class="certification-item" style="--cert-color: #8b5cf6;">
+                        <h4>Google Cloud Professional</h4>
+                        <p>Google Cloud Platform</p>
+                    </div>
+                    <div class="certification-item" style="--cert-color: #ec4899;">
+                        <h4>React Advanced Certification</h4>
+                        <p>Meta / Facebook</p>
+                    </div>
+                    <div class="certification-item" style="--cert-color: #10b981;">
+                        <h4>MongoDB Developer Certification</h4>
+                        <p>MongoDB University</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects section">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+
+            <div class="projects-grid" id="projects-grid">
+                <!-- Projects will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+        <div class="container">
+            <h2 class="section-title">Let's Work Together</h2>
+            <p class="contact-subtitle">
+                Have a project in mind? Let's discuss how we can work together to bring your ideas to life.
+            </p>
+
+            <div class="contact-cards">
+                <div class="contact-card" data-color="blue">
+                    <div class="contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <p class="contact-value" data-copy="your.email@example.com">your.email@example.com</p>
+                    <button class="copy-btn" onclick="copyToClipboard('your.email@example.com', this)">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+
+                <div class="contact-card" data-color="green">
+                    <div class="contact-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Location</h3>
+                    <p class="contact-value">Cairo, Egypt</p>
+                </div>
+
+                <div class="contact-card" data-color="purple">
+                    <div class="contact-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3>WhatsApp</h3>
+                    <p class="contact-value" data-copy="+20 123 456 7890">+20 123 456 7890</p>
+                    <button class="copy-btn" onclick="copyToClipboard('+20 123 456 7890', this)">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+
+            <div class="social-links-footer">
+                <a href="https://github.com/yourusername" target="_blank" class="social-icon">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/yourusername" target="_blank" class="social-icon">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://twitter.com/yourusername" target="_blank" class="social-icon">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://wa.me/yourphonenumber" target="_blank" class="social-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="current-year"></span> [Your Name]. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scroll-top" class="scroll-top" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Floating Contact Button -->
+    <a href="#contact" class="floating-contact" aria-label="Contact">
+        <i class="fas fa-comment-dots"></i>
+    </a>
+
+    <script src="js/data.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
