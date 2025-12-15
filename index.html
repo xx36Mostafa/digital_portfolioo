@@ -1,343 +1,889 @@
 <!DOCTYPE html>
-<html lang="ar" dir="ltr">
+<html lang="ar" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Portfolio of [Your Name] - Full Stack Developer">
-    <meta property="og:title" content="[Your Name] - Portfolio">
-    <meta property="og:description" content="Full Stack Developer Portfolio">
-    <meta property="og:type" content="website">
+    <title>شرح تحليل NLP على Movie Review Dataset</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <title>Mustafa Nasser Anwar</title>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.8;
+        }
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap"
-        rel="stylesheet">
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
 
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
 
-    <link rel="stylesheet" href="styles/globals.css">
-    <link rel="stylesheet" href="styles/navbar.css">
-    <link rel="stylesheet" href="styles/hero.css">
-    <link rel="stylesheet" href="styles/about.css">
-    <link rel="stylesheet" href="styles/skills.css">
-    <link rel="stylesheet" href="styles/experience.css">
-    <link rel="stylesheet" href="styles/projects.css">
-    <link rel="stylesheet" href="styles/contact.css">
-    <link rel="stylesheet" href="styles/footer.css">
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-right: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section h2 .number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+            font-size: 0.8em;
+        }
+
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.3em;
+            margin: 20px 0 10px 0;
+        }
+
+        .section p {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .example {
+            background: #fff3cd;
+            border-right: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .example strong {
+            color: #856404;
+        }
+
+        .note {
+            background: #d1ecf1;
+            border-right: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .note strong {
+            color: #0c5460;
+        }
+
+        .important {
+            background: #f8d7da;
+            border-right: 4px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .important strong {
+            color: #721c24;
+        }
+
+        ul {
+            margin: 15px 0 15px 30px;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h4 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            background: #2d2d2d;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: right;
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .comparison-table tr:hover {
+            background: #f5f5f5;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Loading Spinner -->
-    <div id="loading-spinner" class="loading-spinner">
-        <div class="spinner"></div>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 تحليل NLP على Movie Review Dataset</h1>
+            <p>شرح شامل لكل تقنيات معالجة اللغة الطبيعية المطبقة على كوربس مراجعات الأفلام</p>
+        </div>
+
+        <div class="content">
+
+            <div class="section">
+                <h2><span class="number">📊</span> نظرة عامة على الكوربس</h2>
+                <p>الكوربس اللي اشتغلنا عليه هو <strong>rt-polarity dataset</strong> وده عبارة عن مراجعات أفلام من موقع
+                    Rotten Tomatoes.</p>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>5,331</h4>
+                        <p>مراجعة إيجابية</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>5,331</h4>
+                        <p>مراجعة سلبية</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>10,662</h4>
+                        <p>إجمالي المراجعات</p>
+                    </div>
+                </div>
+
+                <div class="note">
+                    <strong>ملحوظة:</strong> كل سطر في الملف = مراجعة واحدة، وكل المراجعات بحروف صغيرة (lowercase).
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">1</span> تنظيف البيانات (Data Cleaning)</h2>
+                <p><strong>الهدف:</strong> تنظيف النصوص من الحاجات الزيادة اللي مش هتفيدنا في التحليل.</p>
+
+                <h3>الخطوات:</h3>
+                <ul>
+                    <li><strong>تحويل لحروف صغيرة:</strong> علشان "Movie" و "movie" يبقوا نفس الكلمة</li>
+                    <li><strong>إزالة الروابط (URLs):</strong> اللينكات مش مفيدة في تحليل المشاعر</li>
+                    <li><strong>إزالة الأرقام:</strong> الأرقام عادة مش مهمة في فهم المشاعر</li>
+                    <li><strong>إزالة علامات الترقيم:</strong> علشان نركز على الكلمات نفسها</li>
+                    <li><strong>إزالة المسافات الزائدة:</strong> تنظيم النص</li>
+                </ul>
+
+                <div class="code-block">
+                    def clean_text(text):
+                    text = text.lower()
+                    text = re.sub(r"http\s*\S*", " ", text)
+                    text = re.sub(r"\d+", "", text)
+                    text = re.sub(r"[!\"#$%&'()*+,-./:;<=>?@\[\]^_`{|}~]", " ", text)
+                        text = re.sub(r"\s+", " ", text).strip()
+                        return text
+                </div>
+
+                <div class="example">
+                    <strong>مثال:</strong><br>
+                    قبل: the rock is destined to be the 21st century's new "conan"<br>
+                    بعد: the rock is destined to be the st century s new conan
+                </div>
+            </div>
+
+
+            <div class="section">
+                <h2><span class="number">2</span> Sentence Tokenization (تقسيم لجمل)</h2>
+                <p><strong>الهدف:</strong> تقسيم كل مراجعة لجمل منفصلة.</p>
+                <p>بنستخدم <code>nltk.sent_tokenize()</code> علشان نقسم النص لجمل بناءً على علامات الترقيم زي النقطة
+                    والعلامات التانية.</p>
+
+                <div class="code-block">
+                    sentences = nltk.sent_tokenize(review)
+                </div>
+
+                <div class="example">
+                    <strong>مثال:</strong><br>
+                    النص: "The movie was great. I loved it. Highly recommended."<br>
+                    النتيجة: ['The movie was great.', 'I loved it.', 'Highly recommended.']
+                </div>
+
+                <div class="note">
+                    <strong>فايدتها:</strong> مفيدة لو عايز تحلل كل جملة لوحدها أو تعرف متوسط طول الجمل.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">3</span> Word Tokenization (تقسيم لكلمات)</h2>
+                <p><strong>الهدف:</strong> تقسيم كل جملة لكلمات منفصلة.</p>
+                <p>بنستخدم <code>nltk.word_tokenize()</code> علشان نحول الجملة من string واحد لقائمة من الكلمات.</p>
+
+                <div class="code-block">
+                    tokens = nltk.word_tokenize(text)
+                </div>
+
+                <div class="example">
+                    <strong>مثال:</strong><br>
+                    النص: "the movie was great"<br>
+                    النتيجة: ['the', 'movie', 'was', 'great']
+                </div>
+
+                <div class="note">
+                    <strong>فايدتها:</strong> أول خطوة أساسية في أي تحليل NLP - لازم نقسم النص لكلمات علشان نقدر
+                    نعالجها.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">4</span> Stop Words Removal (إزالة الكلمات الشائعة)</h2>
+                <p><strong>الهدف:</strong> شيل الكلمات الشائعة اللي مش بتضيف معنى كبير.</p>
+                <p>Stop words هي كلمات زي: the, is, a, an, in, on, at, etc. - موجودة في كل الجمل ومش بتفرق في المعنى
+                    الأساسي.</p>
+
+                <div class="code-block">
+                    stop_words = set(stopwords.words('english'))
+                    filtered = [word for word in tokens if word not in stop_words]
+                </div>
+
+                <div class="example">
+                    <strong>مثال:</strong><br>
+                    قبل: ['the', 'movie', 'is', 'very', 'good']<br>
+                    بعد: ['movie', 'very', 'good']
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>198</h4>
+                        <p>عدد stop words في الإنجليزية</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>45%</h4>
+                        <p>نسبة التوفير في الكلمات</p>
+                    </div>
+                </div>
+
+                <div class="important">
+                    <strong>تحذير:</strong> في تحليل المشاعر، كلمات زي "not" و "no" مهمة جداً! يعني "good" مختلفة عن
+                    "not good".
+                </div>
+            </div>
+
+
+            <div class="section">
+                <h2><span class="number">5</span> Stemming (استخراج الجذور)</h2>
+                <p><strong>الهدف:</strong> رجوع الكلمة لجذرها الأساسي بطريقة بسيطة.</p>
+                <p>Stemming بيقطع نهاية الكلمة علشان يوصل للجذر. بنستخدم <strong>Porter Stemmer</strong> وهو الأشهر.</p>
+
+                <div class="code-block">
+                    stemmer = PorterStemmer()
+                    stemmed = stemmer.stem(word)
+                </div>
+
+                <div class="example">
+                    <strong>أمثلة:</strong><br>
+                    running → run<br>
+                    playing → play<br>
+                    easily → easili ❌ (مش كلمة حقيقية!)<br>
+                    fairly → fairli ❌ (مش كلمة حقيقية!)
+                </div>
+
+                <h3>المميزات والعيوب:</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>المميزات</th>
+                        <th>العيوب</th>
+                    </tr>
+                    <tr>
+                        <td>⚡ سريع جداً</td>
+                        <td>❌ أحياناً بيطلع كلمات مش حقيقية</td>
+                    </tr>
+                    <tr>
+                        <td>💾 بيوفر مساحة</td>
+                        <td>❌ مش دقيق 100%</td>
+                    </tr>
+                    <tr>
+                        <td>✅ بسيط في الاستخدام</td>
+                        <td>❌ مش بيفهم سياق الكلمة</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    <strong>متى نستخدمه:</strong> لو عايز سرعة وحجم البيانات كبير جداً (زي محركات البحث).
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">6</span> Lemmatization (التحويل للشكل القاموسي)</h2>
+                <p><strong>الهدف:</strong> رجوع الكلمة لأصلها باستخدام قاموس وقواعد اللغة.</p>
+                <p>Lemmatization أذكى من Stemming - بيستخدم قاموس حقيقي وبيفهم نوع الكلمة (اسم، فعل، صفة).</p>
+
+                <div class="code-block">
+                    lemmatizer = WordNetLemmatizer()
+                    lemma = lemmatizer.lemmatize(word, pos='v') # v = verb
+                </div>
+
+                <div class="example">
+                    <strong>أمثلة:</strong><br>
+                    running → run ✅<br>
+                    better → good ✅<br>
+                    flies → fly ✅<br>
+                    caring → care ✅
+                </div>
+
+                <h3>Lemmatization مع POS Tags (أحسن!):</h3>
+                <p>لو عرفنا نوع الكلمة (اسم، فعل، صفة) قبل ما نعمل lemmatization، النتيجة بتبقى أدق.</p>
+
+                <div class="code-block">
+                    def get_wordnet_pos(tag):
+                    if tag.startswith('J'): return 'a' # صفة
+                    elif tag.startswith('V'): return 'v' # فعل
+                    elif tag.startswith('N'): return 'n' # اسم
+                    elif tag.startswith('R'): return 'r' # ظرف
+                    else: return 'n'
+
+                    pos_tags = pos_tag(tokens)
+                    for word, tag in pos_tags:
+                    wordnet_pos = get_wordnet_pos(tag)
+                    lemma = lemmatizer.lemmatize(word, pos=wordnet_pos)
+                </div>
+
+                <div class="important">
+                    <strong>الخلاصة:</strong> Lemmatization أفضل من Stemming في معظم الحالات لأنه بيطلع كلمات حقيقية
+                    ودقيق أكتر.
+                </div>
+            </div>
+
+
+            <div class="section">
+                <h2><span class="number">7</span> POS Tagging (تحديد نوع الكلمات)</h2>
+                <p><strong>الهدف:</strong> تحديد نوع كل كلمة في الجملة (اسم، فعل، صفة، ظرف، إلخ).</p>
+                <p>POS = Part of Speech (جزء من الكلام)</p>
+
+                <h3>باستخدام NLTK:</h3>
+                <div class="code-block">
+                    pos_tags = pos_tag(tokens)
+                    # النتيجة: [('movie', 'NN'), ('was', 'VBD'), ('good', 'JJ')]
+                </div>
+
+                <h3>أهم POS Tags:</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Tag</th>
+                        <th>المعنى</th>
+                        <th>مثال</th>
+                    </tr>
+                    <tr>
+                        <td>NN</td>
+                        <td>اسم (Noun)</td>
+                        <td>movie, film</td>
+                    </tr>
+                    <tr>
+                        <td>VB</td>
+                        <td>فعل (Verb)</td>
+                        <td>watch, love</td>
+                    </tr>
+                    <tr>
+                        <td>JJ</td>
+                        <td>صفة (Adjective)</td>
+                        <td>good, bad</td>
+                    </tr>
+                    <tr>
+                        <td>RB</td>
+                        <td>ظرف (Adverb)</td>
+                        <td>very, really</td>
+                    </tr>
+                    <tr>
+                        <td>DT</td>
+                        <td>أداة تعريف (Determiner)</td>
+                        <td>the, a, an</td>
+                    </tr>
+                </table>
+
+                <h3>باستخدام spaCy (أدق وأسرع):</h3>
+                <div class="code-block">
+                    doc = nlp(text)
+                    for token in doc:
+                    print(token.text, token.pos_)
+                </div>
+
+                <div class="note">
+                    <strong>فايدتها في تحليل المشاعر:</strong><br>
+                    • الصفات (JJ) مهمة جداً: good, bad, excellent, terrible<br>
+                    • الظروف (RB) مهمة: very, extremely, really<br>
+                    • نقدر نفلتر ونجيب الصفات بس ونحللها
+                </div>
+
+                <div class="example">
+                    <strong>مثال على الفلترة:</strong><br>
+                    نجيب كل الصفات من المراجعات الإيجابية: good, great, excellent, amazing<br>
+                    نجيب كل الصفات من المراجعات السلبية: bad, terrible, boring, awful
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">8</span> UnigramTagger (تدريب Model مخصص)</h2>
+                <p><strong>الهدف:</strong> تدريب model بسيط يتعلم يحدد نوع الكلمات.</p>
+                <p>بنستخدم <strong>Brown Corpus</strong> (كوربس إنجليزي كبير) علشان ندرب الـ model.</p>
+
+                <div class="code-block">
+                    # جلب البيانات
+                    tagged_sentences = brown.tagged_sents()[:3000]
+                    train_data = tagged_sentences[:1500]
+                    test_data = tagged_sentences[1500:]
+
+                    # التدريب
+                    tagger = UnigramTagger(train_data)
+
+                    # قياس الدقة
+                    accuracy = tagger.evaluate(test_data)
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>3000</h4>
+                        <p>جملة من Brown Corpus</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>~85%</h4>
+                        <p>دقة الموديل</p>
+                    </div>
+                </div>
+
+                <div class="note">
+                    <strong>ملحوظة:</strong> UnigramTagger بسيط - بيحفظ كل كلمة مع نوعها الأشهر. في models أحسن زي
+                    BigramTagger و HMM.
+                </div>
+            </div>
+
+
+            <div class="section">
+                <h2><span class="number">9</span> Named Entity Recognition (التعرف على الكيانات)</h2>
+                <p><strong>الهدف:</strong> لقيان أسماء الأشخاص، الأماكن، المنظمات، التواريخ، إلخ في النص.</p>
+                <p>بنستخدم spaCy لأنه ممتاز في NER.</p>
+
+                <div class="code-block">
+                    doc = nlp(text)
+                    for ent in doc.ents:
+                    print(ent.text, ent.label_)
+                </div>
+
+                <h3>أنواع الكيانات:</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>النوع</th>
+                        <th>المعنى</th>
+                        <th>مثال</th>
+                    </tr>
+                    <tr>
+                        <td>PERSON</td>
+                        <td>أسماء أشخاص</td>
+                        <td>Arnold Schwarzenegger, Steven Spielberg</td>
+                    </tr>
+                    <tr>
+                        <td>ORG</td>
+                        <td>منظمات/شركات</td>
+                        <td>Google, Microsoft</td>
+                    </tr>
+                    <tr>
+                        <td>GPE</td>
+                        <td>دول/مدن</td>
+                        <td>Cairo, Egypt, USA</td>
+                    </tr>
+                    <tr>
+                        <td>DATE</td>
+                        <td>تواريخ</td>
+                        <td>2024, last year, Monday</td>
+                    </tr>
+                    <tr>
+                        <td>MONEY</td>
+                        <td>مبالغ مالية</td>
+                        <td>$100, 50 dollars</td>
+                    </tr>
+                </table>
+
+                <div class="example">
+                    <strong>مثال من المراجعات:</strong><br>
+                    النص: "Arnold Schwarzenegger was amazing in this movie"<br>
+                    الكيانات: Arnold Schwarzenegger → PERSON
+                </div>
+
+                <h3>Visualization باستخدام displacy:</h3>
+                <p>spaCy بيوفر أداة رهيبة لعرض الكيانات بشكل ملون في HTML.</p>
+
+                <div class="code-block">
+                    html = displacy.render(doc, style="ent")
+                    with open('entities.html', 'w') as f:
+                    f.write(html)
+                </div>
+
+                <div class="note">
+                    <strong>فايدتها:</strong> نقدر نعرف المراجعة بتتكلم عن مين، ونحلل المشاعر تجاه أشخاص أو أماكن معينة.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">10</span> Spell Checking (تصحيح الأخطاء الإملائية)</h2>
+                <p><strong>الهدف:</strong> تصحيح الأخطاء الإملائية في النصوص.</p>
+
+                <h3>باستخدام TextBlob:</h3>
+                <div class="code-block">
+                    from textblob import TextBlob
+                    text = "i havv a goood experin"
+                    corrected = str(TextBlob(text).correct())
+                    # النتيجة: "i have a good experience"
+                </div>
+
+                <h3>باستخدام SpellChecker:</h3>
+                <div class="code-block">
+                    from spellchecker import SpellChecker
+                    spell = SpellChecker()
+                    words = ["reciev", "goood", "experin"]
+                    corrected = [spell.correction(w) for w in words]
+                    # النتيجة: ['receive', 'good', 'experience']
+                </div>
+
+                <div class="note">
+                    <strong>متى نستخدمه:</strong> مفيد جداً للنصوص من social media أو user input اللي فيها أخطاء كتير.
+                </div>
+
+                <div class="important">
+                    <strong>ملحوظة:</strong> في كوربس المراجعات بتاعنا، النصوص نظيفة ومفيش أخطاء كتير، فمش محتاجين spell
+                    checking كتير.
+                </div>
+            </div>
+
+
+            <div class="section">
+                <h2><span class="number">11</span> PlaintextCorpusReader (قراءة الكوربس احترافياً)</h2>
+                <p><strong>الهدف:</strong> قراءة الكوربس بطريقة منظمة وسهلة.</p>
+                <p>NLTK بيوفر PlaintextCorpusReader اللي بيسهل التعامل مع ملفات الكوربس.</p>
+
+                <div class="code-block">
+                    from nltk.corpus.reader import PlaintextCorpusReader
+
+                    corpus = PlaintextCorpusReader('rt-polaritydata', '.*\.txt')
+
+                    # جلب أسماء الملفات
+                    files = corpus.fileids()
+
+                    # قراءة الكلمات
+                    words = corpus.words('rt-polarity.pos')
+
+                    # قراءة الجمل
+                    sents = corpus.sents('rt-polarity.pos')
+                </div>
+
+                <div class="note">
+                    <strong>فايدتها:</strong> بدل ما نفتح الملفات يدوياً، PlaintextCorpusReader بيوفر functions جاهزة
+                    للقراءة والتحليل.
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">12</span> التحليل الإحصائي</h2>
+                <p><strong>الهدف:</strong> فهم البيانات من خلال الإحصائيات.</p>
+
+                <h3>إحصائيات عامة:</h3>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h4>1,540</h4>
+                        <p>كلمة فريدة</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>2,147</h4>
+                        <p>إجمالي الكلمات</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>10.7</h4>
+                        <p>متوسط طول المراجعة</p>
+                    </div>
+                </div>
+
+                <h3>أكثر الكلمات تكراراً:</h3>
+                <div class="code-block">
+                    from collections import Counter
+
+                    word_freq = Counter(all_words)
+                    most_common = word_freq.most_common(20)
+                </div>
+
+                <div class="example">
+                    <strong>النتيجة:</strong><br>
+                    1. movie (29 مرة)<br>
+                    2. film (27 مرة)<br>
+                    3. like (16 مرة)<br>
+                    4. story (13 مرة)<br>
+                    5. director (8 مرات)
+                </div>
+
+                <h3>مقارنة بين الإيجابية والسلبية:</h3>
+                <p>بنقسم الكلمات حسب نوع المراجعة ونشوف الفرق:</p>
+
+                <table class="comparison-table">
+                    <tr>
+                        <th>المراجعات الإيجابية</th>
+                        <th>المراجعات السلبية</th>
+                    </tr>
+                    <tr>
+                        <td>good, great, best, love</td>
+                        <td>bad, boring, worst, dull</td>
+                    </tr>
+                    <tr>
+                        <td>excellent, amazing, wonderful</td>
+                        <td>terrible, awful, disappointing</td>
+                    </tr>
+                </table>
+
+                <div class="note">
+                    <strong>ملاحظة:</strong> الصفات بتفرق كتير بين الإيجابية والسلبية - ده مهم جداً في تحليل المشاعر!
+                </div>
+            </div>
+
+
+            <div class="section">
+                <h2><span class="number">📋</span> ملخص الخطوات</h2>
+                <p>الترتيب الصحيح لمعالجة النصوص:</p>
+
+                <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <ol style="font-size: 1.1em; line-height: 2;">
+                        <li><strong>Data Cleaning</strong> - تنظيف النصوص</li>
+                        <li><strong>Sentence Tokenization</strong> - تقسيم لجمل (اختياري)</li>
+                        <li><strong>Word Tokenization</strong> - تقسيم لكلمات</li>
+                        <li><strong>Stop Words Removal</strong> - إزالة الكلمات الشائعة</li>
+                        <li><strong>Stemming/Lemmatization</strong> - رجوع الكلمات لأصلها</li>
+                        <li><strong>POS Tagging</strong> - تحديد نوع الكلمات</li>
+                        <li><strong>NER</strong> - التعرف على الكيانات</li>
+                        <li><strong>Analysis</strong> - التحليل والإحصائيات</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">💡</span> نصائح مهمة</h2>
+
+                <div class="important">
+                    <strong>✅ افعل:</strong>
+                    <ul>
+                        <li>نظف البيانات جيداً قبل أي شيء</li>
+                        <li>استخدم Lemmatization بدل Stemming (أدق)</li>
+                        <li>جرب مع وبدون Stop Words Removal</li>
+                        <li>استخدم spaCy للمشاريع الكبيرة (أسرع)</li>
+                        <li>احفظ النتائج في ملفات للمراجعة</li>
+                    </ul>
+                </div>
+
+                <div class="important">
+                    <strong>❌ لا تفعل:</strong>
+                    <ul>
+                        <li>لا تزيل Stop Words في Sentiment Analysis بدون تفكير (كلمات زي "not" مهمة!)</li>
+                        <li>لا تستخدم Stemming إذا كنت تحتاج دقة عالية</li>
+                        <li>لا تنسى تنظيف البيانات (URLs, numbers, punctuation)</li>
+                        <li>لا تستخدم كل التقنيات معاً بدون سبب</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">🎯</span> الخطوات القادمة</h2>
+                <p>بعد ما خلصنا التحليل الأساسي، ممكن نكمل بـ:</p>
+
+                <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">1. Sentiment Analysis باستخدام Machine Learning
+                    </h3>
+                    <p>نبني model يصنف المراجعات تلقائياً (إيجابي/سلبي)</p>
+
+                    <h3 style="color: #667eea; margin: 20px 0 15px 0;">2. Word Embeddings</h3>
+                    <p>نحول الكلمات لأرقام باستخدام Word2Vec أو GloVe</p>
+
+                    <h3 style="color: #667eea; margin: 20px 0 15px 0;">3. Deep Learning</h3>
+                    <p>نستخدم BERT أو Transformers للتصنيف</p>
+
+                    <h3 style="color: #667eea; margin: 20px 0 15px 0;">4. Topic Modeling</h3>
+                    <p>نكتشف المواضيع الرئيسية في المراجعات</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">📊</span> النتائج المحفوظة</h2>
+                <p>بعد تشغيل الكود، هتلاقي الملفات دي:</p>
+
+                <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="color: #667eea;">1. nlp_analysis_results.csv</h3>
+                    <p>ملف CSV فيه كل النتائج:</p>
+                    <ul>
+                        <li>النص الأصلي</li>
+                        <li>النص بعد التنظيف</li>
+                        <li>عدد الكلمات</li>
+                        <li>POS tags</li>
+                        <li>عينة من الكلمات المعالجة</li>
+                    </ul>
+
+                    <h3 style="color: #667eea; margin-top: 20px;">2. entities_visualization.html</h3>
+                    <p>ملف HTML فيه visualization للكيانات المسماة بشكل ملون</p>
+                </div>
+            </div>
+
+
+            <div class="section">
+                <h2><span class="number">🔧</span> المكتبات المستخدمة</h2>
+
+                <table class="comparison-table">
+                    <tr>
+                        <th>المكتبة</th>
+                        <th>الاستخدام</th>
+                        <th>التثبيت</th>
+                    </tr>
+                    <tr>
+                        <td><strong>NLTK</strong></td>
+                        <td>Tokenization, POS Tagging, Stemming, Lemmatization</td>
+                        <td>pip install nltk</td>
+                    </tr>
+                    <tr>
+                        <td><strong>spaCy</strong></td>
+                        <td>POS Tagging, NER, Visualization</td>
+                        <td>pip install spacy<br>python -m spacy download en_core_web_sm</td>
+                    </tr>
+                    <tr>
+                        <td><strong>pandas</strong></td>
+                        <td>حفظ النتائج في CSV</td>
+                        <td>pip install pandas</td>
+                    </tr>
+                    <tr>
+                        <td><strong>TextBlob</strong></td>
+                        <td>Spell Checking (اختياري)</td>
+                        <td>pip install textblob</td>
+                    </tr>
+                    <tr>
+                        <td><strong>SpellChecker</strong></td>
+                        <td>Spell Checking (اختياري)</td>
+                        <td>pip install pyspellchecker</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2><span class="number">📚</span> مصادر للتعلم</h2>
+
+                <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                    <h3 style="color: #667eea;">Documentation:</h3>
+                    <ul style="line-height: 2;">
+                        <li><a href="https://www.nltk.org/" target="_blank" style="color: #667eea;">NLTK
+                                Documentation</a></li>
+                        <li><a href="https://spacy.io/" target="_blank" style="color: #667eea;">spaCy Documentation</a>
+                        </li>
+                        <li><a href="http://www.cs.cornell.edu/people/pabo/movie-review-data/" target="_blank"
+                                style="color: #667eea;">Movie Review Dataset</a></li>
+                    </ul>
+
+                    <h3 style="color: #667eea; margin-top: 20px;">Courses:</h3>
+                    <ul style="line-height: 2;">
+                        <li>Natural Language Processing with Python (NLTK Book)</li>
+                        <li>spaCy Course (free online)</li>
+                        <li>Coursera NLP Specialization</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                <h2 style="color: white;">🎉 تم بنجاح!</h2>
+                <p style="color: white; font-size: 1.2em;">
+                    الآن أنت فاهم كل خطوة في معالجة النصوص وطبقتها على كوربس حقيقي!
+                </p>
+                <p style="color: white; margin-top: 20px;">
+                    جرب تطبق نفس التقنيات على كوربس تاني أو تبني sentiment analysis model.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <h3>📝 ملاحظات نهائية</h3>
+            <p style="margin: 15px 0;">هذا التحليل يغطي كل تقنيات NLP الأساسية اللي درستها في السكاشنز</p>
+            <p>تم التطبيق على rt-polarity dataset (10,662 مراجعة أفلام)</p>
+            <p style="margin-top: 20px; opacity: 0.7;">© 2024 - NLP Analysis Project</p>
+        </div>
     </div>
-
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar">
-        <div class="nav-container">
-            <a href="#home" class="nav-logo">
-                <span class="gradient-text">&lt;YourName/&gt;</span>
-            </a>
-
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#skills" class="nav-link">Skills</a></li>
-                <li><a href="#experience" class="nav-link">Experience</a></li>
-                <li><a href="#education" class="nav-link">Education</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
-
-            <div class="nav-buttons">
-                <a href="#contact" class="btn btn-primary">Contact Me</a>
-                <a href="#projects" class="btn btn-outline">View My Work</a>
-            </div>
-
-            <div class="hamburger" id="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-background">
-            <div class="orb orb-1"></div>
-            <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div>
-        </div>
-
-        <div class="hero-content">
-            <h1 class="hero-title">
-                Hi, I'm <span class="gradient-text typing-text" id="typing-name">[Your Name]</span>
-            </h1>
-            <p class="hero-subtitle" id="typing-subtitle"></p>
-            <p class="hero-tagline">
-                Building innovative solutions with modern technologies.<br>
-                Passionate about creating exceptional digital experiences.
-            </p>
-
-            <div class="social-links">
-                <a href="https://github.com/yourusername" target="_blank" class="social-icon" aria-label="GitHub">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://linkedin.com/in/yourusername" target="_blank" class="social-icon"
-                    aria-label="LinkedIn">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://wa.me/yourphonenumber" target="_blank" class="social-icon" aria-label="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-                <a href="mailto:your.email@example.com" class="social-icon" aria-label="Email">
-                    <i class="fas fa-envelope"></i>
-                </a>
-            </div>
-
-            <a href="#about" class="btn btn-hero">Learn More About Me</a>
-
-            <div class="scroll-indicator">
-                <div class="mouse">
-                    <div class="wheel"></div>
-                </div>
-                <p>Scroll Down</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="about section">
-        <div class="container">
-            <div class="about-grid">
-                <div class="about-text">
-                    <h2 class="section-title">About Me</h2>
-                    <div class="about-content">
-                        <p>
-                            Hello! I'm a passionate Full Stack Developer with expertise in building modern web
-                            applications.
-                            I love turning complex problems into simple, beautiful, and intuitive solutions.
-                        </p>
-                        <p>
-                            With several years of experience in the tech industry, I've worked on diverse projects
-                            ranging
-                            from e-commerce platforms to AI-powered applications. My goal is to create impactful digital
-                            experiences that make a difference.
-                        </p>
-                        <p>
-                            When I'm not coding, you can find me exploring new technologies, contributing to open-source
-                            projects, or sharing knowledge with the developer community.
-                        </p>
-
-                        <div class="about-info">
-                            <div class="info-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Cairo, Egypt</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-briefcase"></i>
-                                <span>5+ Years Experience</span>
-                            </div>
-                            <div class="info-item">
-                                <i class="fas fa-envelope"></i>
-                                <span>your.email@example.com</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="about-image animate-on-scroll">
-                    <div class="image-wrapper">
-                        <img src="https://github.com/xx36Mostafa/digital_portfolioo/blob/main/image.jpg?raw=true"
-                            alt="Mustafa Nasser" class="profile-img">
-                    </div>
-
-                    <div class="about-cards">
-                        <div class="about-card">
-                            <h3>What I Do</h3>
-                            <ul>
-                                <li><i class="fas fa-check"></i> Full Stack Development</li>
-                                <li><i class="fas fa-check"></i> UI/UX Design</li>
-                                <li><i class="fas fa-check"></i> API Development</li>
-                                <li><i class="fas fa-check"></i> Database Design</li>
-                            </ul>
-                        </div>
-
-                        <div class="about-card">
-                            <h3>Key Services</h3>
-                            <ul>
-                                <li><i class="fas fa-check"></i> Web Application Development</li>
-                                <li><i class="fas fa-check"></i> Mobile App Development</li>
-                                <li><i class="fas fa-check"></i> Technical Consulting</li>
-                                <li><i class="fas fa-check"></i> Code Review & Optimization</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills" class="skills section">
-        <div class="container">
-            <h2 class="section-title">
-                My Skills
-                <span class="title-underline"></span>
-            </h2>
-
-            <div class="skills-grid" id="skills-grid">
-                <!-- Skills will be dynamically inserted here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Experience Section -->
-    <section id="experience" class="experience section">
-        <div class="container">
-            <h2 class="section-title">Work Experience</h2>
-
-            <div class="timeline" id="timeline">
-                <!-- Experience items will be dynamically inserted here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Education Section -->
-    <section id="education" class="education section">
-        <div class="container">
-            <h2 class="section-title">Education & Certifications</h2>
-
-            <div class="education-grid">
-                <div class="education-card">
-                    <div class="education-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <h3>Bachelor of Computer Science</h3>
-                    <p class="education-university">Cairo University</p>
-                    <p class="education-date">2015 - 2019</p>
-                    <p class="education-description">
-                        Graduated with honors. Focused on software engineering, algorithms, and artificial intelligence.
-                    </p>
-                </div>
-
-                <div class="certifications">
-                    <h3 class="certifications-title">Certifications</h3>
-                    <div class="certification-item" style="--cert-color: #6366f1;">
-                        <h4>AWS Certified Solutions Architect</h4>
-                        <p>Amazon Web Services</p>
-                    </div>
-                    <div class="certification-item" style="--cert-color: #8b5cf6;">
-                        <h4>Google Cloud Professional</h4>
-                        <p>Google Cloud Platform</p>
-                    </div>
-                    <div class="certification-item" style="--cert-color: #ec4899;">
-                        <h4>React Advanced Certification</h4>
-                        <p>Meta / Facebook</p>
-                    </div>
-                    <div class="certification-item" style="--cert-color: #10b981;">
-                        <h4>MongoDB Developer Certification</h4>
-                        <p>MongoDB University</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" class="projects section">
-        <div class="container">
-            <h2 class="section-title">Featured Projects</h2>
-
-            <div class="projects-grid" id="projects-grid">
-                <!-- Projects will be dynamically inserted here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact section">
-        <div class="container">
-            <h2 class="section-title">Let's Work Together</h2>
-            <p class="contact-subtitle">
-                Have a project in mind? Let's discuss how we can work together to bring your ideas to life.
-            </p>
-
-            <div class="contact-cards">
-                <div class="contact-card" data-color="blue">
-                    <div class="contact-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <h3>Email</h3>
-                    <p class="contact-value" data-copy="your.email@example.com">your.email@example.com</p>
-                    <button class="copy-btn" onclick="copyToClipboard('your.email@example.com', this)">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-
-                <div class="contact-card" data-color="green">
-                    <div class="contact-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <h3>Location</h3>
-                    <p class="contact-value">Cairo, Egypt</p>
-                </div>
-
-                <div class="contact-card" data-color="purple">
-                    <div class="contact-icon">
-                        <i class="fab fa-whatsapp"></i>
-                    </div>
-                    <h3>WhatsApp</h3>
-                    <p class="contact-value" data-copy="+20 123 456 7890">+20 123 456 7890</p>
-                    <button class="copy-btn" onclick="copyToClipboard('+20 123 456 7890', this)">
-                        <i class="fas fa-copy"></i> Copy
-                    </button>
-                </div>
-            </div>
-
-            <div class="social-links-footer">
-                <a href="https://github.com/yourusername" target="_blank" class="social-icon">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://linkedin.com/in/yourusername" target="_blank" class="social-icon">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://twitter.com/yourusername" target="_blank" class="social-icon">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a href="https://wa.me/yourphonenumber" target="_blank" class="social-icon">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; <span id="current-year"></span> [Your Name]. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <!-- Scroll to Top Button -->
-    <button id="scroll-top" class="scroll-top" aria-label="Scroll to top">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-
-    <!-- Floating Contact Button -->
-    <a href="#contact" class="floating-contact" aria-label="Contact">
-        <i class="fas fa-comment-dots"></i>
-    </a>
-
-    <script src="js/data.js"></script>
-    <script src="js/animations.js"></script>
-    <script src="js/main.js"></script>
 </body>
 
 </html>
