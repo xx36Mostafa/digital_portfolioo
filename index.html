@@ -1,2327 +1,475 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشروع Text Generation - التوثيق الكامل</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap"
-        rel="stylesheet">
-    <style>
-        :root {
-            --primary: #1a1a2e;
-            --secondary: #16213e;
-            --accent: #0f3460;
-            --highlight: #e94560;
-            --text: #f1f1f1;
-            --text-dim: #b8b8b8;
-            --code-bg: #0d1117;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --info: #3498db;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
-            color: var(--text);
-            line-height: 1.8;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        header {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: linear-gradient(120deg, rgba(233, 69, 96, 0.1) 0%, rgba(15, 52, 96, 0.2) 100%);
-            border-radius: 20px;
-            margin-bottom: 3rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            animation: fadeInDown 0.8s ease;
-        }
-
-        h1 {
-            font-family: 'Cairo', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #e94560 0%, #f39c12 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
-        }
-
-        .subtitle {
-            font-size: 1.3rem;
-            color: var(--text-dim);
-            font-weight: 300;
-        }
-
-        nav {
-            background: rgba(26, 26, 46, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 3rem;
-            position: sticky;
-            top: 20px;
-            z-index: 100;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-            animation: fadeIn 1s ease;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-        }
-
-        nav a {
-            color: var(--text);
-            text-decoration: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        nav a:hover {
-            background: var(--highlight);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
-        }
-
-        .section {
-            background: rgba(26, 26, 46, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 3rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            animation: fadeInUp 0.8s ease;
-        }
-
-        h2 {
-            font-family: 'Cairo', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--highlight);
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 3px solid var(--highlight);
-            display: inline-block;
-        }
-
-        h3 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--info);
-            margin: 2rem 0 1rem;
-        }
-
-        h4 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--warning);
-            margin: 1.5rem 0 1rem;
-        }
-
-        .code-block {
-            background: var(--code-bg);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            overflow-x: auto;
-            border-right: 4px solid var(--highlight);
-            font-family: 'Courier New', monospace;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .code-block code {
-            color: #7dd3fc;
-        }
-
-        .highlight {
-            background: linear-gradient(120deg, rgba(233, 69, 96, 0.2) 0%, rgba(243, 156, 18, 0.2) 100%);
-            padding: 0.3rem 0.6rem;
-            border-radius: 5px;
-            font-weight: 600;
-        }
-
-        .info-box {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0.05) 100%);
-            border-right: 4px solid var(--info);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .success-box {
-            background: linear-gradient(135deg, rgba(46, 204, 113, 0.1) 0%, rgba(46, 204, 113, 0.05) 100%);
-            border-right: 4px solid var(--success);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .warning-box {
-            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(243, 156, 18, 0.05) 100%);
-            border-right: 4px solid var(--warning);
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        ul,
-        ol {
-            margin: 1rem 0 1rem 2rem;
-        }
-
-        li {
-            margin: 0.5rem 0;
-            color: var(--text-dim);
-        }
-
-        strong {
-            color: var(--highlight);
-            font-weight: 700;
-        }
-
-        .comparison-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .comparison-table th {
-            background: var(--highlight);
-            color: white;
-            padding: 1rem;
-            text-align: right;
-            font-weight: 700;
-        }
-
-        .comparison-table td {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .comparison-table tr:hover {
-            background: rgba(233, 69, 96, 0.1);
-        }
-
-        footer {
-            text-align: center;
-            padding: 3rem 2rem;
-            margin-top: 4rem;
-            color: var(--text-dim);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin: 0.3rem;
-        }
-
-        .badge-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .badge-warning {
-            background: var(--warning);
-            color: white;
-        }
-
-        .badge-info {
-            background: var(--info);
-            color: white;
-        }
-
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            h2 {
-                font-size: 1.8rem;
-            }
-
-            .section {
-                padding: 1.5rem;
-            }
-
-            nav ul {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <meta name="description" content="Mustafa Nasser - AI & Automation Engineer | Web Scraper Expert">
+    <meta property="og:title" content="Mustafa Nasser - AI & Automation Engineer">
+    <meta property="og:description"
+        content="AI & Automation Engineer specializing in web scraping, machine learning, and intelligent automation systems">
+    <meta property="og:type" content="website">
+    <title>Mustafa Nasser - AI & Automation Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>🤖 مشروع Text Generation</h1>
-            <p class="subtitle">توثيق شامل للمشروع - مقارنة بين نموذجين من الـ Chatbot</p>
-        </header>
-
-        <nav>
-            <ul>
-                <li><a href="#overview">نظرة عامة</a></li>
-                <li><a href="#eda-results">نتائج EDA</a></li>
-                <li><a href="#eda">EDA - التحليل الاستكشافي</a></li>
-                <li><a href="#data-cleaning">تنظيف البيانات</a></li>
-                <li><a href="#preprocessing">المعالجة المسبقة</a></li>
-                <li><a href="#vectorization">Vectorization</a></li>
-                <li><a href="#models">المقارنة بين النموذجين</a></li>
-                <li><a href="#concepts">المفاهيم الأساسية</a></li>
-                <li><a href="#textblob">مكتبة TextBlob</a></li>
-                <li><a href="#old-tasks">Old Tasks</a></li>
-            </ul>
-        </nav>
-
-        <!-- نظرة عامة -->
-        <section class="section" id="overview">
-            <h2>📊 نظرة عامة على المشروع</h2>
-
-            <p>المشروع عبارة عن بناء <span class="highlight">Chatbot</span> باستخدام تقنيات الذكاء الاصطناعي لتوليد
-                النصوص. تم تطوير نموذجين مختلفين:</p>
-
-            <div class="info-box">
-                <h3>النموذج الأول: Transformer Chatbot (final_chatbot)</h3>
-                <p><strong>الوصف:</strong> نموذج مبني من الصفر باستخدام بنية Transformer</p>
-                <p><strong>Dataset:</strong> Cornell Movie-Dialogs Corpus</p>
-                <p><strong>عدد المحادثات:</strong> 221,616 سؤال-جواب</p>
-                <span class="badge badge-warning">النتائج كانت عشوائية</span>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="gradient-text">Mustafa Nasser</span>
             </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#skills" class="nav-link">Skills</a>
+                <a href="#experience" class="nav-link">Experience</a>
 
-            <div class="success-box">
-                <h3>النموذج الثاني: GPT-2 Fine-tuning (gpt2_chatbot_finetuning)</h3>
-                <p><strong>الوصف:</strong> Fine-tuning على نموذج GPT-2 المدرب مسبقاً</p>
-                <p><strong>Dataset:</strong> نفس الـ Dataset</p>
-                <p><strong>عدد العينات للتدريب:</strong> 20,000 محادثة</p>
-                <span class="badge badge-success">النتائج كانت أفضل بكثير</span>
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#contact" class="nav-link">Contact</a>
             </div>
-        </section>
-
-        <!-- EDA Section -->
-        <section class="section" id="eda">
-            <h2>📊 EDA - التحليل الاستكشافي للبيانات</h2>
-
-            <div class="warning-box">
-                <h3>❌ هل عملنا EDA في المشروع؟</h3>
-                <p><strong>لا، الكودين لم يتضمنا EDA</strong></p>
-                <p>الكود راح مباشرة من تحميل البيانات → المعالجة → التدريب</p>
+            <div class="nav-buttons">
+                <a href="#contact" class="btn btn-primary">Contact Me</a>
+                <a href="#projects" class="btn btn-outline">View My Work</a>
             </div>
+            <button class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
 
-            <h3>🤔 هل لازم نضيف EDA؟</h3>
-
-            <div class="info-box">
-                <h4>للمشروع بتاعك:</h4>
-                <ul>
-                    <li>❌ <strong>مش لازم ضروري</strong> - لأن المشروع Text Generation مش Classification</li>
-                    <li>✅ <strong>لكن إضافته ميزة كبيرة</strong> - يثبت فهمك العميق للبيانات في المناقشة</li>
-                    <li>📈 <strong>يساعد في تبرير القرارات</strong> - مثل اختيار max_length=60 أو vocab_size</li>
-                </ul>
-
-                <h4>للمشاريع بشكل عام:</h4>
-                <ul>
-                    <li><strong>Classification/Regression:</strong> EDA <span class="highlight">لازم ضروري</span></li>
-                    <li><strong>Text Generation:</strong> اختياري لكن موصى به بشدة</li>
-                    <li><strong>Research Projects:</strong> دايماً ضروري</li>
-                </ul>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-background">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        <div class="container hero-content">
+            <h1 class="hero-title fade-in">
+                Hi, I'm <span class="gradient-text typing-text" id="typingName">Mustafa Nasser</span>
+            </h1>
+            <p class="hero-subtitle fade-in-delay-1" id="typingRole">AI & Automation Engineer | Web Scraper Expert</p>
+            <p class="hero-tagline fade-in-delay-2">
+                Passionate about building intelligent systems that automate complex workflows,<br>
+                extract insights from data, and solve real-world problems using cutting-edge AI technologies.
+            </p>
+            <div class="social-links fade-in-delay-3">
+                <a href="https://github.com/mostafanasser" target="_blank" class="social-icon" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/mostafanasser" target="_blank" class="social-icon"
+                    aria-label="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://wa.me/201098974486" target="_blank" class="social-icon" aria-label="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="mailto:mostafanasser3786@gmail.com" class="social-icon" aria-label="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
             </div>
-
-            <h3>✅ ينفع نضيفه دلوقتي؟</h3>
-
-            <div class="success-box">
-                <p><strong>أيوة ينفع! وهيكون سهل وسريع (30-60 دقيقة)</strong></p>
-
-                <h4>📍 وين نضيفه؟</h4>
-                <p>أضف cell جديدة في الـ notebook بعنوان <code>Exploratory Data Analysis</code></p>
-                <p><strong>الترتيب الصحيح:</strong></p>
-                <div class="code-block">
-                    <code>1. Load Dataset ✓
-2. Parse Conversations ✓
-3. 🆕 EDA ← هنا
-4. Text Preprocessing ✓
-5. Tokenization ✓
-6. Model Building ✓</code>
+            <a href="#about" class="btn btn-primary btn-hero fade-in-delay-4">Learn More About Me</a>
+            <div class="scroll-indicator">
+                <div class="mouse">
+                    <div class="wheel"></div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <h3>📋 إيه اللي نضيفه بالظبط؟</h3>
-
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>التحليل</th>
-                        <th>الوصف</th>
-                        <th>الكود المطلوب</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>1. Dataset Overview</strong></td>
-                        <td>إحصائيات عامة</td>
-                        <td>عدد الأسئلة، الأجوبة، الكلمات الفريدة</td>
-                    </tr>
-                    <tr>
-                        <td><strong>2. Text Length</strong></td>
-                        <td>إحصائيات الطول</td>
-                        <td>Mean, Median, Std, Min, Max</td>
-                    </tr>
-                    <tr>
-                        <td><strong>3. Distribution</strong></td>
-                        <td>توزيع الأطوال</td>
-                        <td>Histograms لطول الجمل</td>
-                    </tr>
-                    <tr>
-                        <td><strong>4. Word Frequency</strong></td>
-                        <td>الكلمات الأكثر تكراراً</td>
-                        <td>Top 20 words + Bar chart</td>
-                    </tr>
-                    <tr>
-                        <td><strong>5. Vocabulary</strong></td>
-                        <td>تحليل المفردات</td>
-                        <td>Unique words, Vocabulary richness</td>
-                    </tr>
-                    <tr>
-                        <td><strong>6. Punctuation</strong></td>
-                        <td>علامات الترقيم</td>
-                        <td>نسبة الجمل بها ?, !, commas</td>
-                    </tr>
-                    <tr>
-                        <td><strong>7. Short/Long</strong></td>
-                        <td>الجمل القصيرة/الطويلة</td>
-                        <td>عدد الجمل <3 كلمات و>30 كلمة</td>
-                    </tr>
-                    <tr>
-                        <td><strong>8. Samples</strong></td>
-                        <td>أمثلة عشوائية</td>
-                        <td>5-10 محادثات كأمثلة</td>
-                    </tr>
-                    <tr>
-                        <td><strong>9. Box Plots</strong></td>
-                        <td>مقارنة التوزيعات</td>
-                        <td>Questions vs Answers</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>💡 أمثلة على الكود</h3>
-
-            <h4>1️⃣ Basic Statistics:</h4>
-            <div class="code-block">
-                <code>import numpy as np
-question_lengths = [len(q.split()) for q in questions_clean]
-answer_lengths = [len(a.split()) for a in answers_clean]
-
-print(f"Questions - Mean: {np.mean(question_lengths):.2f}")
-print(f"Questions - Median: {np.median(question_lengths):.0f}")
-print(f"Answers - Mean: {np.mean(answer_lengths):.2f}")</code>
-            </div>
-
-            <h4>2️⃣ Distribution Plot:</h4>
-            <div class="code-block">
-                <code>import matplotlib.pyplot as plt
-
-plt.figure(figsize=(15, 5))
-plt.subplot(1, 2, 1)
-plt.hist(question_lengths, bins=50, color='skyblue')
-plt.title('Question Length Distribution')
-plt.xlabel('Words')
-plt.subplot(1, 2, 2)
-plt.hist(answer_lengths, bins=50, color='lightcoral')
-plt.title('Answer Length Distribution')
-plt.show()</code>
-            </div>
-
-            <h4>3️⃣ Word Frequency:</h4>
-            <div class="code-block">
-                <code>from collections import Counter
-
-all_words = []
-for q in questions_clean:
-    all_words.extend(q.split())
-for a in answers_clean:
-    all_words.extend(a.split())
-
-word_freq = Counter(all_words)
-most_common = word_freq.most_common(20)
-
-for word, count in most_common:
-    print(f"{word:15s} : {count:,}")</code>
-            </div>
-
-            <h3>🎯 الفائدة من EDA في المناقشة</h3>
-
-            <div class="success-box">
-                <h4>استخدم نتائج EDA لتبرير قراراتك:</h4>
-                <ul>
-                    <li><strong>Max Length = 60:</strong> "بناءً على EDA، 95% من الجمل أقل من 60 كلمة"</li>
-                    <li><strong>Vocab Size = 20,000:</strong> "الكلمات النادرة (مرة واحدة) تشكل ضوضاء فقط"</li>
-                    <li><strong>Architecture Choice:</strong> "توزيع الأسئلة والأجوبة متشابه، لذا استخدمنا
-                        Encoder-Decoder"</li>
-                    <li><strong>Short Responses:</strong> "15% من الردود قصيرة جداً، لذا النموذج أحياناً يولد ردود
-                        قصيرة"</li>
-                </ul>
-            </div>
-
-            <div class="warning-box">
-                <h4>⏱️ الوقت المطلوب:</h4>
-                <p>إضافة EDA كامل يستغرق <strong>30-60 دقيقة</strong></p>
-                <p>العائد: فهم أعمق للبيانات + إمكانية تبرير كل قرار + انطباع احترافي</p>
-            </div>
-        </section>
-
-        <!-- تنظيف البيانات -->
-
-        <!-- قسم نتائج EDA الفعلية -->
-        <section class="section" id="eda-results">
-            <h2>📊 نتائج EDA الفعلية من المشروع</h2>
-
-            <div class="success-box">
-                <h3>✅ تم إضافة EDA للمشروع!</h3>
-                <p>بعد إضافة الـ EDA cells، حصلنا على نتائج حقيقية من البيانات</p>
-                <p><strong>دي النتائج الفعلية اللي طلعت من تشغيل الكود:</strong></p>
-            </div>
-
-            <h3>1️⃣ إحصائيات Dataset الأساسية</h3>
-            <div class="code-block">
-                <code>Total movie lines: 304,713
-Total conversations: 83,097
-Total question-answer pairs: 221,616</code>
-            </div>
-
-            <div class="info-box">
-                <h4>💡 ماذا يعني هذا؟</h4>
-                <ul>
-                    <li><strong>304,713 سطر</strong> في ملف movie_lines - دي كل جمل الأفلام</li>
-                    <li><strong>83,097 محادثة</strong> - كل محادثة فيها جملتين أو أكثر</li>
-                    <li><strong>221,616 زوج سؤال-جواب</strong> - دي اللي هنستخدمها فعلاً للتدريب</li>
-                </ul>
-                <p><strong>الفائدة:</strong> عرفنا إن عندنا بيانات كتير (221K pairs) كافية للتدريب!</p>
-            </div>
-
-            <h3>2️⃣ تحليل أطوال النصوص (Text Lengths)</h3>
-
-            <h4>أطوال الأسئلة (Questions):</h4>
-            <div class="code-block">
-                <code>Min: 0 words
-Max: 313 words
-Median (50th percentile): 7 words
-75th percentile: 13 words
-90th percentile: 22 words
-95th percentile: 31 words
-99th percentile: 55 words</code>
-            </div>
-
-            <h4>أطوال الأجوبة (Answers):</h4>
-            <div class="code-block">
-                <code>Min: 0 words
-Max: 556 words
-Median (50th percentile): 7 words
-75th percentile: 13 words
-90th percentile: 23 words
-95th percentile: 32 words
-99th percentile: 58 words</code>
-            </div>
-
-            <div class="success-box">
-                <h4>📊 التوصية الذكية:</h4>
-                <div class="code-block">
-                    <code>Recommended max_length for questions: 31 words
-Recommended max_length for answers: 32 words
-Overall recommended max_length: 32 words</code>
+    <!-- About Section -->
+    <section class="about section" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text animate-on-scroll">
+                    <h2 class="section-title">About Me</h2>
+                    <p>
+                        I'm an AI & Automation Engineer with 3+ years of experience in building intelligent systems
+                        that automate complex workflows, automate data extraction, and generate insights from structured
+                        and unstructured data using Python, machine learning, and advanced automation frameworks.
+                    </p>
+                    <p>
+                        Based in Giza, Egypt, I specialize in creating scalable solutions that bridge the gap between
+                        complex data sources and actionable business intelligence. My expertise spans web scraping,
+                        machine learning, process automation, and API development.
+                    </p>
+                    <p>
+                        I've successfully delivered 50+ projects on Upwork with 100% client satisfaction, working with
+                        international clients to solve complex automation challenges and extract valuable insights from
+                        data.
+                    </p>
+                    <div class="about-info">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Giza, Egypt</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-briefcase"></i>
+                            <span>3+ Years Experience</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>mostafanasser3786@gmail.com</span>
+                        </div>
+                    </div>
                 </div>
-                <p><strong>💡 ماذا يعني الـ 95th percentile؟</strong></p>
-                <ul>
-                    <li>95% من الأسئلة طولها 31 كلمة أو أقل</li>
-                    <li>95% من الأجوبة طولها 32 كلمة أو أقل</li>
-                    <li>لو استخدمنا max_length = 32، هنغطي 95% من البيانات</li>
-                    <li>الـ 5% الباقية (الجمل الطويلة جداً) هتتقطع</li>
-                </ul>
-
-                <p><strong>⚠️ مقارنة مع المشروع الأصلي:</strong></p>
-                <p>في المشروع استخدمنا <code>max_length = 60</code> بدون EDA</p>
-                <p>لكن الـ EDA بيقولنا إن <code>max_length = 32</code> كافي!</p>
-                <p><strong>الفائدة:</strong> توفير Memory و سرعة أكبر في التدريب 🚀</p>
-            </div>
-
-            <h3>3️⃣ تحليل المفردات (Vocabulary Analysis)</h3>
-            <div class="code-block">
-                <code>Total words (with repetition): 4,909,720
-Unique words (vocabulary size): 49,045
-Vocabulary richness: 1.00%</code>
-            </div>
-
-            <div class="info-box">
-                <h4>💡 شرح النتائج:</h4>
-                <ul>
-                    <li><strong>4.9 مليون كلمة</strong> - مجموع كل الكلمات في كل المحادثات</li>
-                    <li><strong>49,045 كلمة فريدة</strong> - حجم الـ Vocabulary الحقيقي</li>
-                    <li><strong>1% Richness</strong> - معناها في تكرار كبير (نفس الكلمات بتتكرر كتير)</li>
-                </ul>
-
-                <p><strong>⚠️ مقارنة مع المشروع:</strong></p>
-                <p><strong>النموذج الأول:</strong> استخدم 48,895 كلمة (قريب جداً!)</p>
-                <p><strong>النموذج الثاني:</strong> GPT-2 عنده 50,257 token</p>
-                <p><strong>الفائدة:</strong> عرفنا إن الـ vocab_size في المشروع كان مناسب ✅</p>
-            </div>
-
-            <h3>4️⃣ أكثر 30 كلمة شيوعاً</h3>
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>الترتيب</th>
-                        <th>الكلمة</th>
-                        <th>التكرار</th>
-                        <th>النسبة</th>
-                        <th>الملاحظة</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td><strong>you</strong></td>
-                        <td>216,244</td>
-                        <td>4.404%</td>
-                        <td>🥇 الأكثر استخداماً</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td><strong>i</strong></td>
-                        <td>209,034</td>
-                        <td>4.258%</td>
-                        <td>ضمائر الحوار</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td><strong>the</strong></td>
-                        <td>141,339</td>
-                        <td>2.879%</td>
-                        <td>أداة تعريف</td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td><strong>to</strong></td>
-                        <td>116,562</td>
-                        <td>2.374%</td>
-                        <td>حرف جر</td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td><strong>a</strong></td>
-                        <td>103,508</td>
-                        <td>2.108%</td>
-                        <td>أداة تنكير</td>
-                    </tr>
-                    <tr>
-                        <td>6-10</td>
-                        <td>s, it, t, that, and</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>كلمات شائعة</td>
-                    </tr>
-                    <tr>
-                        <td>12</td>
-                        <td><strong>what</strong></td>
-                        <td>56,304</td>
-                        <td>1.147%</td>
-                        <td>❓ كلمة سؤال مهمة</td>
-                    </tr>
-                    <tr>
-                        <td>23</td>
-                        <td><strong>know</strong></td>
-                        <td>32,510</td>
-                        <td>0.662%</td>
-                        <td>فعل مهم في المحادثات</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="warning-box">
-                <h4>🔍 ملاحظات مهمة:</h4>
-                <ul>
-                    <li><strong>Stop Words:</strong> معظم الكلمات الأكثر شيوعاً هي Stop Words (you, i, the, to, a)</li>
-                    <li><strong>s و t:</strong> دول غالباً نتيجة contractions مثل "it's" → "it" + "s"</li>
-                    <li><strong>what:</strong> أكثر كلمة سؤال - معناها في أسئلة كتير بتبدأ بـ "what"</li>
-                </ul>
-
-                <p><strong>💡 القرار:</strong> في النماذج الحديثة زي GPT-2، مش بنحذف Stop Words</p>
-                <p><strong>السبب:</strong> النموذج محتاجها لفهم السياق والتركيب النحوي</p>
-            </div>
-
-            <h3>5️⃣ علامات الترقيم (Punctuation)</h3>
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>العلامة</th>
-                        <th>العدد</th>
-                        <th>الاستخدام</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Periods (.)</td>
-                        <td>718,642</td>
-                        <td>الأكثر - نهاية الجمل</td>
-                    </tr>
-                    <tr>
-                        <td>Apostrophes (')</td>
-                        <td>312,091</td>
-                        <td>Contractions (it's, don't)</td>
-                    </tr>
-                    <tr>
-                        <td>Commas (,)</td>
-                        <td>241,933</td>
-                        <td>فصل الجمل والعبارات</td>
-                    </tr>
-                    <tr>
-                        <td>Question marks (?)</td>
-                        <td>163,744</td>
-                        <td>نهاية الأسئلة</td>
-                    </tr>
-                    <tr>
-                        <td>Exclamation marks (!)</td>
-                        <td>50,562</td>
-                        <td>التعبير عن المشاعر</td>
-                    </tr>
-                    <tr>
-                        <td>Quotation marks (")</td>
-                        <td>14,540</td>
-                        <td>الحوار المباشر</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="info-box">
-                <h4>💡 الفائدة:</h4>
-                <p>معرفة علامات الترقيم بتساعدنا نفهم إن:</p>
-                <ul>
-                    <li>163K علامة استفهام = في أسئلة كتير</li>
-                    <li>312K apostrophe = الناس بتستخدم contractions كتير</li>
-                    <li>دا بيأثر على الـ preprocessing و tokenization</li>
-                </ul>
-            </div>
-
-            <h3>6️⃣ فحص جودة البيانات (Data Quality)</h3>
-            <div class="code-block">
-                <code>Empty questions: 197
-Empty answers: 202
-Very short questions (≤2 words): 33,781 (15.24%)
-Very short answers (≤2 words): 35,375 (15.96%)
-Very long questions (>50 words): 2,846 (1.28%)
-Very long answers (>50 words): 3,306 (1.49%)
-Texts with numbers: 2,476 (1.12%)</code>
-            </div>
-
-            <div class="warning-box">
-                <h4>⚠️ المشاكل المكتشفة:</h4>
-
-                <p><strong>1. نصوص فارغة (Empty):</strong></p>
-                <ul>
-                    <li>197 سؤال فارغ + 202 إجابة فارغة = 399 نص فارغ</li>
-                    <li><strong>المشكلة:</strong> النصوص دي مالهاش فايدة للتدريب</li>
-                    <li><strong>الحل:</strong> لازم نحذفهم في الـ preprocessing</li>
-                </ul>
-
-                <p><strong>2. نصوص قصيرة جداً (Very Short):</strong></p>
-                <ul>
-                    <li>15% من الأسئلة و 16% من الأجوبة قصيرة جداً (كلمة أو اتنين)</li>
-                    <li><strong>أمثلة:</strong> "Yes.", "No.", "What?", "Okay."</li>
-                    <li><strong>الملاحظة:</strong> دي طبيعية في المحادثات، لكن ممكن تكون noise</li>
-                    <li><strong>القرار:</strong> نخليها - دي جزء طبيعي من المحادثات</li>
-                </ul>
-
-                <p><strong>3. نصوص طويلة جداً (Very Long):</strong></p>
-                <ul>
-                    <li>1.28% من الأسئلة و 1.49% من الأجوبة طويلة جداً (>50 كلمة)</li>
-                    <li><strong>المشكلة:</strong> بتاخد memory كتير و صعب معالجتها</li>
-                    <li><strong>الحل:</strong> الـ max_length هيقطعها تلقائياً</li>
-                </ul>
-
-                <p><strong>4. نصوص فيها أرقام:</strong></p>
-                <ul>
-                    <li>1.12% فقط من النصوص فيها أرقام</li>
-                    <li><strong>الملاحظة:</strong> نسبة قليلة - مش مشكلة كبيرة</li>
-                </ul>
-            </div>
-
-            <h3>7️⃣ أمثلة فعلية من المحادثات</h3>
-
-            <div class="code-block">
-                <code><strong>Example 1:</strong>
-Q: It's kind of late.
-A: It got lonely upstairs. There's someone on the roof.
-   (Q: 4 words, A: 9 words)
-
-<strong>Example 2:</strong>
-Q: You said nothing. You told me nothing.
-A: You had left me! I kept silent out of rage.
-   (Q: 7 words, A: 10 words)
-
-<strong>Example 3:</strong>
-Q: Well, maybe we'd better forget about it, then.
-A: You can't prove it, can you? You're still trying to -- 
-   marriage license! Did you say -- ?
-   (Q: 8 words, A: 18 words)
-
-<strong>Example 4:</strong>
-Q: Watch out, you're on my hair!
-A: Sorry. Move your hand to the left. There you go. Gorgeous.
-   (Q: 6 words, A: 11 words)
-
-<strong>Example 5:</strong>
-Q: He's all right. He'd like to see you. But listen... What's 
-   the law doing to me? Do they think I did it, or is it just 
-   something else to pin on me?
-A: I'd tell you if I knew. But I'm not in this. Ask the police.
-   (Q: 32 words, A: 14 words)</code>
-            </div>
-
-            <div class="success-box">
-                <h4>💡 ملاحظات على الأمثلة:</h4>
-                <ul>
-                    <li><strong>طبيعية:</strong> المحادثات تبدو طبيعية وواقعية</li>
-                    <li><strong>متنوعة:</strong> في جمل قصيرة وطويلة</li>
-                    <li><strong>سياق:</strong> كل إجابة مرتبطة بالسؤال</li>
-                    <li><strong>مشاعر:</strong> في تعبيرات عن المشاعر (rage, sorry)</li>
-                </ul>
-                <p><strong>الفائدة:</strong> دي بتطمننا إن البيانات كويسة ومناسبة للتدريب!</p>
-            </div>
-
-            <h3>📋 الخلاصة النهائية من EDA</h3>
-
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>المقياس</th>
-                        <th>القيمة الفعلية</th>
-                        <th>التأثير على المشروع</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>عدد أزواج التدريب</td>
-                        <td>221,616</td>
-                        <td>✅ كافي جداً للتدريب</td>
-                    </tr>
-                    <tr>
-                        <td>Recommended max_length</td>
-                        <td>32 كلمة</td>
-                        <td>⚠️ استخدمنا 60 - كان ممكن نوفر memory</td>
-                    </tr>
-                    <tr>
-                        <td>Vocabulary Size</td>
-                        <td>49,045 كلمة</td>
-                        <td>✅ قريب من اللي استخدمناه (48,895)</td>
-                    </tr>
-                    <tr>
-                        <td>متوسط طول السؤال</td>
-                        <td>~7 كلمات (median)</td>
-                        <td>✅ جمل قصيرة - سهلة المعالجة</td>
-                    </tr>
-                    <tr>
-                        <td>نصوص فارغة</td>
-                        <td>399 نص</td>
-                        <td>⚠️ لازم نحذفهم</td>
-                    </tr>
-                    <tr>
-                        <td>أكثر كلمة</td>
-                        <td>"you" (4.4%)</td>
-                        <td>✅ طبيعي - محادثات بين أشخاص</td>
-                    </tr>
-                    <tr>
-                        <td>Vocabulary Richness</td>
-                        <td>1.00%</td>
-                        <td>✅ تكرار طبيعي للكلمات</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>🎯 الاستنتاجات والتوصيات</h3>
-
-            <div class="success-box">
-                <h4>✅ ما كان صح في المشروع الأصلي:</h4>
-                <ul>
-                    <li>حجم البيانات كان ممتاز (221K pairs)</li>
-                    <li>Vocabulary size كان مناسب (~49K)</li>
-                    <li>البيانات متنوعة وطبيعية</li>
-                    <li>مافيش مشاكل كبيرة في جودة البيانات</li>
-                </ul>
-            </div>
-
-            <div class="warning-box">
-                <h4>⚠️ ما كان ممكن نحسنه:</h4>
-                <ul>
-                    <li><strong>max_length:</strong> كان ممكن نستخدم 32 بدل 60 → توفير 47% memory!</li>
-                    <li><strong>حذف النصوص الفارغة:</strong> الـ 399 نص الفارغين كانوا noise</li>
-                    <li><strong>معالجة النصوص الطويلة:</strong> الـ 6K نص اللي أطول من 50 كلمة</li>
-                </ul>
-            </div>
-
-            <div class="info-box">
-                <h4>💡 الدروس المستفادة:</h4>
-                <ol>
-                    <li><strong>EDA ضروري قبل أي مشروع</strong> - بيوفر وقت ومجهود</li>
-                    <li><strong>البيانات الحقيقية تختلف عن التوقعات</strong> - لازم نشوفها</li>
-                    <li><strong>Percentiles أهم من Max/Min</strong> - الـ 95th percentile أفضل من الـ Max</li>
-                    <li><strong>Quality checks بتكشف مشاكل</strong> - النصوص الفارغة كانت مختبية</li>
-                    <li><strong>Sample data بتعطي feel</strong> - الأمثلة بتطمنا على جودة البيانات</li>
-                </ol>
-            </div>
-
-            <h3>🚀 التطبيق العملي - كيف نستخدم النتائج دي:</h3>
-
-            <div class="code-block">
-                <code># بناءً على نتائج EDA، الـ parameters المثالية:
-
-MAX_LENGTH = 32  # بدل 60 - من الـ 95th percentile
-VOCAB_SIZE = 50000  # قريب من الـ 49,045 الفعلي
-BATCH_SIZE = 64  # يعتمد على الـ memory المتاح
-
-# حذف النصوص الفارغة
-questions = [q for q in questions if len(q.strip()) > 0]
-answers = [a for a in answers if len(a.strip()) > 0]
-
-# Validation: تأكد إن الأطوال متطابقة
-assert len(questions) == len(answers)</code>
-            </div>
-
-            <div class="success-box">
-                <p><strong>🎉 الخلاصة:</strong> EDA فعلاً غيّر فهمنا للبيانات وساعدنا ناخد قرارات أذكى!</p>
-            </div>
-        </section>
-
-
-        <section class="section" id="data-cleaning">
-            <h2>🧹 كيف تم تنظيف البيانات (Data Cleaning)</h2>
-
-            <h3>في النموذج الأول (Transformer):</h3>
-            <div class="code-block">
-                <code>def preprocess_text(text):
-    text = text.lower().strip()
-    text = re.sub(r"([?.!,])", r" \1 ", text)
-    text = re.sub(r"[^a-zA-Z0-9?.!,]+", " ", text)
-    text = re.sub(r'\s+', " ", text)
-    return text.strip()</code>
-            </div>
-
-            <div class="info-box">
-                <h4>الخطوات المطبقة:</h4>
-                <ol>
-                    <li><strong>تحويل إلى أحرف صغيرة:</strong> <code>text.lower()</code> - توحيد شكل النص</li>
-                    <li><strong>إضافة مسافات حول علامات الترقيم:</strong>
-                        <code>re.sub(r"([?.!,])", r" \1 ", text)</code></li>
-                    <li><strong>إزالة الرموز الخاصة:</strong> الاحتفاظ فقط بالحروف والأرقام وعلامات الترقيم الأساسية
-                    </li>
-                    <li><strong>إزالة المسافات الزائدة:</strong> <code>re.sub(r'\s+', " ", text)</code></li>
-                    <li><strong>إضافة tokens خاصة:</strong> <code>&lt;start&gt;</code> و <code>&lt;end&gt;</code> لكل
-                        جملة</li>
-                </ol>
-            </div>
-
-            <h3>في النموذج الثاني (GPT-2):</h3>
-            <div class="code-block">
-                <code>def clean_text(text):
-    text = text.lower().strip()
-    text = re.sub(r"[^a-zA-Z0-9\s?.!,']", "", text)
-    text = re.sub(r'\s+', ' ', text)
-    return text</code>
-            </div>
-
-            <div class="success-box">
-                <h4>التحسينات في النموذج الثاني:</h4>
-                <ul>
-                    <li>استخدام <span class="highlight">GPT2Tokenizer</span> الجاهز بدلاً من Keras Tokenizer</li>
-                    <li>الـ Tokenizer مدرب مسبقاً على بيانات ضخمة</li>
-                    <li>يتعامل بشكل أفضل مع الكلمات النادرة والجديدة</li>
-                    <li>Format المحادثات كـ: <code>[السؤال] [الإجابة] &lt;|endoftext|&gt;</code></li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- المعالجة المسبقة -->
-        <section class="section" id="preprocessing">
-            <h2>⚙️ تقنيات المعالجة المسبقة (NLP Preprocessing)</h2>
-
-            <h3>1️⃣ ماذا عن POS Tagging (Part-of-Speech)?</h3>
-            <div class="warning-box">
-                <h4>❌ لم نستخدمه في المشروع</h4>
-                <p><strong>ما هو POS Tagging؟</strong></p>
-                <p>هو تحديد نوع كل كلمة في الجملة (اسم، فعل، صفة، إلخ)</p>
-
-                <p><strong>مثال:</strong></p>
-                <div class="code-block">
-                    <code>"I love machine learning"
-I → Pronoun
-love → Verb
-machine → Noun
-learning → Noun</code>
-                </div>
-
-                <p><strong>لماذا لم نستخدمه؟</strong></p>
-                <ul>
-                    <li>النماذج الحديثة مثل Transformer و GPT-2 <strong>تتعلم التركيب النحوي تلقائياً</strong></li>
-                    <li>الـ Self-Attention mechanism يفهم العلاقات بين الكلمات بدون POS</li>
-                    <li>POS مفيد أكثر للنماذج التقليدية (مثل RNN أو LSTM البسيط)</li>
-                </ul>
-            </div>
-
-            <h3>2️⃣ ماذا عن Morphology (علم الصرف)?</h3>
-            <div class="warning-box">
-                <h4>❌ لم نستخدمه في المشروع</h4>
-                <p><strong>ما هو Morphology؟</strong></p>
-                <p>دراسة بنية الكلمات وأشكالها المختلفة</p>
-
-                <p><strong>مثال:</strong></p>
-                <div class="code-block">
-                    <code>run → running, runs, ran
-happy → happier, happiest, happiness</code>
-                </div>
-
-                <p><strong>أنواعه:</strong></p>
-                <ul>
-                    <li><strong>Stemming:</strong> اقتطاع الكلمة للوصول للجذر (سريع لكن غير دقيق)</li>
-                    <li><strong>Lemmatization:</strong> إرجاع الكلمة لشكلها الأساسي (دقيق لكن أبطأ)</li>
-                </ul>
-
-                <p><strong>لماذا لم نستخدمه؟</strong></p>
-                <ul>
-                    <li>نماذج Transformer و GPT-2 تستخدم <strong>Subword Tokenization</strong></li>
-                    <li>تقسيم الكلمات إلى أجزاء أصغر يعطي نتائج أفضل</li>
-                    <li>يتعامل مع الكلمات النادرة والمشتقات بشكل طبيعي</li>
-                </ul>
-            </div>
-
-            <h3>3️⃣ Syntax Analysis (التحليل النحوي)</h3>
-            <div class="info-box">
-                <h4>❌ لم نستخدمه بشكل صريح</h4>
-                <p><strong>ما هو Syntax Analysis؟</strong></p>
-                <p>تحليل التركيب النحوي للجملة وبناء شجرة العلاقات بين الكلمات</p>
-
-                <p><strong>مثال:</strong></p>
-                <div class="code-block">
-                    <code>الجملة: "The cat sits on the mat"
-التحليل:
-    [Sentence]
-       ├── [Subject: The cat]
-       ├── [Verb: sits]
-       └── [Prepositional Phrase: on the mat]</code>
-                </div>
-
-                <p><strong>كيف يتم؟</strong></p>
-                <ul>
-                    <li><strong>Dependency Parsing:</strong> بناء شجرة العلاقات النحوية</li>
-                    <li><strong>Constituency Parsing:</strong> تقسيم الجملة إلى مكونات نحوية</li>
-                </ul>
-
-                <p><strong>لماذا لم نحتاجه؟</strong></p>
-                <ul>
-                    <li>الـ <strong>Multi-Head Attention</strong> في Transformer يتعلم هذه العلاقات تلقائياً</li>
-                    <li>GPT-2 مدرب مسبقاً على فهم التراكيب النحوية المعقدة</li>
-                    <li>النماذج الحديثة لا تحتاج parsing صريح</li>
-                </ul>
-            </div>
-
-            <h3>4️⃣ Lemmatization (الرجوع للجذر اللغوي)</h3>
-            <div class="warning-box">
-                <h4>❌ لم نستخدمه في المشروع</h4>
-                <p><strong>ما هو Lemmatization؟</strong></p>
-                <p>إرجاع الكلمة إلى شكلها الأساسي (الجذر) في القاموس بشكل دقيق</p>
-
-                <p><strong>أمثلة:</strong></p>
-                <div class="code-block">
-                    <code>running → run
-better → good
-mice → mouse
-was → be</code>
-                </div>
-
-                <p><strong>كيف يعمل؟</strong></p>
-                <ul>
-                    <li>يستخدم قاموس لغوي ومعلومات نحوية (POS)</li>
-                    <li>أدق من Stemming لكن أبطأ</li>
-                    <li>مكتبات مثل NLTK و SpaCy توفره</li>
-                </ul>
-
-                <p><strong>لماذا لم نستخدمه؟</strong></p>
-                <ul>
-                    <li><strong>Subword Tokenization</strong> أفضل للنماذج الحديثة</li>
-                    <li>GPT-2 يقسم الكلمات إلى BPE tokens (Byte Pair Encoding)</li>
-                    <li>مثال: <code>"running"</code> قد تصبح <code>["run", "ning"]</code></li>
-                    <li>هذا يحافظ على المعنى ويتعامل مع الكلمات الجديدة</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- Vectorization -->
-        <section class="section" id="vectorization">
-            <h2>🔢 Vectorization - تحويل النص إلى أرقام</h2>
-
-            <div class="info-box">
-                <h3>ما هو Vectorization؟</h3>
-                <p>عملية تحويل النصوص إلى تمثيل رقمي يمكن للنموذج فهمه والتعامل معه</p>
-            </div>
-
-            <h3>الأنواع المختلفة من Vectorization:</h3>
-
-            <h4>1️⃣ Bag of Words (BoW)</h4>
-            <div class="code-block">
-                <code>الجمل:
-- "I love machine learning"
-- "I love coding"
-
-Vocabulary: [I, love, machine, learning, coding]
-
-التمثيل:
-Sentence 1: [1, 1, 1, 1, 0]
-Sentence 2: [1, 1, 0, 0, 1]</code>
-            </div>
-
-            <div class="warning-box">
-                <h4>أنواع BoW:</h4>
-
-                <p><strong>أ) Binary (ثنائي):</strong></p>
-                <ul>
-                    <li>القيمة 1 إذا كانت الكلمة موجودة، 0 إذا لم تكن</li>
-                    <li>لا يهتم بالتكرار</li>
-                </ul>
-
-                <p><strong>ب) Frequency (التكرار):</strong></p>
-                <ul>
-                    <li>عدد مرات ظهور كل كلمة</li>
-                    <li>مثال: "I love love coding" → [1, 2, 0, 0, 1]</li>
-                </ul>
-
-                <p><strong>ج) Counter (العداد):</strong></p>
-                <ul>
-                    <li>نفس Frequency لكن باستخدام Counter من Python</li>
-                    <li>يعطي dictionary بالتكرارات</li>
-                </ul>
-            </div>
-
-            <h4>2️⃣ TF (Term Frequency)</h4>
-            <div class="code-block">
-                <code>TF = (عدد مرات الكلمة في الوثيقة) / (إجمالي الكلمات في الوثيقة)
-
-مثال: "I love love coding"
-TF(love) = 2 / 4 = 0.5</code>
-            </div>
-
-            <h4>3️⃣ IDF (Inverse Document Frequency)</h4>
-            <div class="code-block">
-                <code>IDF = log(إجمالي عدد الوثائق / عدد الوثائق التي تحتوي الكلمة)
-
-الهدف: تقليل وزن الكلمات الشائعة (the, is, a)</code>
-            </div>
-
-            <h4>4️⃣ TF-IDF</h4>
-            <div class="code-block">
-                <code>TF-IDF = TF × IDF
-
-يعطي وزن أعلى للكلمات المهمة والنادرة
-ووزن أقل للكلمات الشائعة</code>
-            </div>
-
-            <div class="warning-box">
-                <h3>❌ هل استخدمنا هذه الطرق في مشروعنا؟</h3>
-                <p><strong>لا، لم نستخدمها!</strong></p>
-                <p><strong>السبب:</strong></p>
-                <ul>
-                    <li>هذه طرق تقليدية للـ Text Classification أو Information Retrieval</li>
-                    <li>لا تحفظ ترتيب الكلمات ولا السياق</li>
-                    <li><strong>استخدمنا بدلاً منها:</strong></li>
-                </ul>
-            </div>
-
-            <h3>✅ ما استخدمناه في المشروع:</h3>
-
-            <div class="success-box">
-                <h4>النموذج الأول (Transformer):</h4>
-                <p><strong>Word Embeddings + Positional Encoding</strong></p>
-                <div class="code-block">
-                    <code># السطر 250-260 تقريباً
-embedding = Embedding(vocab_size, d_model)
-pos_encoding = positional_encoding(max_seq_len, d_model)
-
-# كل كلمة تتحول لـ vector بحجم 256
-# Positional encoding يضيف معلومات عن موقع الكلمة</code>
-                </div>
-                <ul>
-                    <li><strong>Tokenization:</strong> كل كلمة تأخذ رقم (ID)</li>
-                    <li><strong>Embedding:</strong> تحويل الرقم لـ vector بحجم 256</li>
-                    <li><strong>Positional Encoding:</strong> إضافة معلومات الترتيب</li>
-                </ul>
-            </div>
-
-            <div class="success-box">
-                <h4>النموذج الثاني (GPT-2):</h4>
-                <p><strong>GPT2 Tokenizer + Pre-trained Embeddings</strong></p>
-                <div class="code-block">
-                    <code># حوالي السطر 175-180
-tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
-model = GPT2LMHeadModel.from_pretrained('gpt2')
-
-# يستخدم BPE (Byte Pair Encoding)
-# Embeddings مدربة مسبقاً على بيانات ضخمة</code>
-                </div>
-                <ul>
-                    <li><strong>Subword Tokenization:</strong> تقسيم ذكي للكلمات</li>
-                    <li><strong>Pre-trained Embeddings:</strong> embeddings جاهزة وقوية</li>
-                    <li><strong>Contextual:</strong> كل كلمة لها vector مختلف حسب السياق</li>
-                </ul>
-            </div>
-
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>الطريقة</th>
-                        <th>هل استخدمناها؟</th>
-                        <th>الموقع في الكود</th>
-                        <th>السبب</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Bag of Words</td>
-                        <td>❌ لا</td>
-                        <td>-</td>
-                        <td>لا تحفظ الترتيب والسياق</td>
-                    </tr>
-                    <tr>
-                        <td>TF-IDF</td>
-                        <td>❌ لا</td>
-                        <td>-</td>
-                        <td>للـ Classification فقط</td>
-                    </tr>
-                    <tr>
-                        <td>Word Embeddings</td>
-                        <td>✅ نعم (النموذج 1)</td>
-                        <td>Embedding Layer</td>
-                        <td>تمثيل دلالي للكلمات</td>
-                    </tr>
-                    <tr>
-                        <td>Subword Tokens</td>
-                        <td>✅ نعم (النموذج 2)</td>
-                        <td>GPT2Tokenizer</td>
-                        <td>تعامل أفضل مع الكلمات</td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
-
-        <!-- المقارنة بين النموذجين -->
-        <section class="section" id="models">
-            <h2>⚖️ المقارنة الشاملة بين النموذجين</h2>
-
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>المعيار</th>
-                        <th>النموذج الأول (Transformer)</th>
-                        <th>النموذج الثاني (GPT-2)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>نوع النموذج</strong></td>
-                        <td>Transformer مبني من الصفر</td>
-                        <td>Fine-tuning على GPT-2</td>
-                    </tr>
-                    <tr>
-                        <td><strong>عدد Parameters</strong></td>
-                        <td>~5-10M parameters</td>
-                        <td>117M parameters (GPT-2 small)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Tokenizer</strong></td>
-                        <td>Keras Tokenizer (Word-level)</td>
-                        <td>GPT2Tokenizer (Subword BPE)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Vocab Size</strong></td>
-                        <td>~20,000 كلمة</td>
-                        <td>50,257 token</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Training من الصفر؟</strong></td>
-                        <td>✅ نعم</td>
-                        <td>❌ لا (Fine-tuning فقط)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>عدد Epochs</strong></td>
-                        <td>5 epochs</td>
-                        <td>3 epochs</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Batch Size</strong></td>
-                        <td>64</td>
-                        <td>4</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Learning Rate</strong></td>
-                        <td>Custom schedule مع warmup</td>
-                        <td>5e-5 (ثابت)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>جودة النتائج</strong></td>
-                        <td>⚠️ كلام عشوائي وغير مفهوم</td>
-                        <td>✅ جيدة ومنطقية نسبياً</td>
-                    </tr>
-                    <tr>
-                        <td><strong>وقت التدريب</strong></td>
-                        <td>~2600 ثانية (43 دقيقة)</td>
-                        <td>متغير حسب الموارد</td>
-                    </tr>
-                    <tr>
-                        <td><strong>المزايا</strong></td>
-                        <td>
-                            • فهم بنية Transformer<br>
-                            • تحكم كامل في Architecture<br>
-                            • تعليمي
-                        </td>
-                        <td>
-                            • نتائج أفضل بكثير<br>
-                            • معرفة لغوية مسبقة<br>
-                            • كفاءة أعلى
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>العيوب</strong></td>
-                        <td>
-                            • يحتاج بيانات ووقت أكثر<br>
-                            • نتائج ضعيفة<br>
-                            • Overfitting محتمل
-                        </td>
-                        <td>
-                            • حجم النموذج كبير<br>
-                            • يحتاج GPU قوية<br>
-                            • أقل مرونة
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="success-box">
-                <h3>🎯 الخلاصة</h3>
-                <p><strong>لماذا كان النموذج الثاني أفضل؟</strong></p>
-                <ul>
-                    <li>استفاد من المعرفة اللغوية الضخمة لـ GPT-2</li>
-                    <li>Tokenizer أذكى يتعامل مع الكلمات بشكل أفضل</li>
-                    <li>نموذج أكبر بكثير (117M vs 5M parameters)</li>
-                    <li>Fine-tuning أسرع وأكثر كفاءة من التدريب من الصفر</li>
-                </ul>
-            </div>
-
-            <div class="info-box">
-                <h3>📝 مثال على النتائج</h3>
-                <p><strong>السؤال:</strong> "Tell me about yourself"</p>
-
-                <p><strong>النموذج الأول:</strong></p>
-                <div class="code-block">
-                    <code>"all buzz ny wind for my friend 1 three recidivist 
-1948 gown introduced speeding darryl feelings..."</code>
-                </div>
-                <span class="badge badge-warning">❌ كلام عشوائي وغير مفهوم</span>
-
-                <p style="margin-top: 1rem;"><strong>النموذج الثاني (تقريبي):</strong></p>
-                <div class="code-block">
-                    <code>"I'm just a regular person who loves movies and 
-talking about them. What would you like to know?"</code>
-                </div>
-                <span class="badge badge-success">✅ منطقي ومفهوم</span>
-            </div>
-        </section>
-
-        <!-- المفاهيم الأساسية -->
-        <section class="section" id="concepts">
-            <h2>📚 مفاهيم أساسية إضافية</h2>
-
-            <h3>1️⃣ Fine-tuning vs Training from Scratch</h3>
-            <div class="info-box">
-                <h4>Training from Scratch (النموذج الأول):</h4>
-                <ul>
-                    <li>البداية من الصفر تماماً</li>
-                    <li>تعلم كل شيء من البيانات المتاحة فقط</li>
-                    <li>يحتاج بيانات ضخمة (ملايين العينات)</li>
-                    <li>وقت وموارد كثيرة جداً</li>
-                </ul>
-
-                <h4>Fine-tuning (النموذج الثاني):</h4>
-                <ul>
-                    <li>البداية من نموذج مدرب مسبقاً</li>
-                    <li>تعديل بسيط للتكيف مع المهمة الجديدة</li>
-                    <li>يحتاج بيانات أقل بكثير</li>
-                    <li>أسرع وأكثر كفاءة</li>
-                </ul>
-            </div>
-
-            <h3>2️⃣ Attention Mechanism</h3>
-            <div class="code-block">
-                <code># موجود في النموذج الأول - حوالي السطر 280-300
-MultiHeadAttention(num_heads=8, key_dim=d_model)
-
-# يسمح للنموذج بالتركيز على أجزاء مختلفة من الجملة
-# مثال: في "The cat sat on the mat"
-# عند معالجة "sat"، النموذج ينتبه لـ "cat" و "mat"</code>
-            </div>
-
-            <h3>3️⃣ Label Smoothing</h3>
-            <div class="code-block">
-                <code># في النموذج الأول - السطر 410-420
-loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(
-    from_logits=True,
-    label_smoothing=0.1
-)
-
-# بدلاً من: [0, 0, 1, 0, 0] (One-hot)
-# يصبح: [0.02, 0.02, 0.92, 0.02, 0.02]
-# يمنع الـ Overconfidence</code>
-            </div>
-
-            <h3>4️⃣ Gradient Clipping</h3>
-            <div class="code-block">
-                <code># في النموذج الأول - السطر 450-470
-grads, _ = tf.clip_by_global_norm(gradients, 1.0)
-
-# يمنع الـ gradients من الانفجار (Exploding Gradients)
-# مهم للاستقرار في التدريب</code>
-            </div>
-
-            <h3>5️⃣ Learning Rate Schedule</h3>
-            <div class="code-block">
-                <code># في النموذج الأول - السطر 430-445
-class CustomSchedule(tf.keras.optimizers.schedules.LearningRateSchedule):
-    def __call__(self, step):
-        # Warmup للـ 4000 خطوة الأولى
-        # ثم تناقص تدريجي
-
-# يساعد في التدريب الأفضل والأسرع</code>
-            </div>
-        </section>
-
-        <!-- مكتبة TextBlob -->
-        <section class="section" id="textblob">
-            <h2>📖 مكتبة TextBlob</h2>
-
-            <div class="info-box">
-                <h3>ما هي TextBlob؟</h3>
-                <p>مكتبة Python بسيطة وقوية لمعالجة البيانات النصية (NLP)</p>
-            </div>
-
-            <h3>المميزات الرئيسية:</h3>
-
-            <h4>1️⃣ سهولة الاستخدام</h4>
-            <div class="code-block">
-                <code>from textblob import TextBlob
-
-text = TextBlob("I love machine learning")
-print(text.words)  # ['I', 'love', 'machine', 'learning']
-print(text.tags)   # [('I', 'PRP'), ('love', 'VBP'), ...]</code>
-            </div>
-
-            <h4>2️⃣ Sentiment Analysis (تحليل المشاعر)</h4>
-            <div class="code-block">
-                <code>text = TextBlob("This movie is amazing!")
-print(text.sentiment)
-# Sentiment(polarity=0.8, subjectivity=0.9)
-# polarity: من -1 (سلبي) إلى 1 (إيجابي)
-# subjectivity: من 0 (موضوعي) إلى 1 (ذاتي)</code>
-            </div>
-
-            <h4>3️⃣ Spelling Correction</h4>
-            <div class="code-block">
-                <code>text = TextBlob("I havv goood speling")
-print(text.correct())
-# "I have good spelling"</code>
-            </div>
-
-            <h4>4️⃣ POS Tagging</h4>
-            <div class="code-block">
-                <code>text = TextBlob("Python is awesome")
-print(text.tags)
-# [('Python', 'NNP'), ('is', 'VBZ'), ('awesome', 'JJ')]</code>
-            </div>
-
-            <h4>5️⃣ Noun Phrase Extraction</h4>
-            <div class="code-block">
-                <code>text = TextBlob("The big brown dog jumped")
-print(text.noun_phrases)
-# ['big brown dog']</code>
-            </div>
-
-            <h4>6️⃣ Translation & Language Detection</h4>
-            <div class="code-block">
-                <code>text = TextBlob("Hello World")
-print(text.translate(to="es"))  # "Hola Mundo"
-print(text.detect_language())   # 'en'</code>
-            </div>
-
-            <h4>7️⃣ Lemmatization</h4>
-            <div class="code-block">
-                <code>from textblob import Word
-
-word = Word("running")
-print(word.lemmatize("v"))  # 'run'
-
-word = Word("better")
-print(word.lemmatize("a"))  # 'good'</code>
-            </div>
-
-            <div class="success-box">
-                <h3>🎯 أهمية TextBlob</h3>
-                <ul>
-                    <li><strong>سهلة التعلم:</strong> API بسيطة وواضحة للمبتدئين</li>
-                    <li><strong>متعددة الوظائف:</strong> تغطي معظم مهام NLP الأساسية</li>
-                    <li><strong>مناسبة للـ Prototyping:</strong> اختبار الأفكار بسرعة</li>
-                    <li><strong>Built on NLTK:</strong> تستخدم مكتبة NLTK القوية في الخلفية</li>
-                    <li><strong>دعم متعدد اللغات:</strong> ترجمة وتحليل لغات مختلفة</li>
-                </ul>
-            </div>
-
-            <div class="warning-box">
-                <h3>⚠️ متى لا نستخدم TextBlob؟</h3>
-                <ul>
-                    <li>المشاريع الكبيرة التي تحتاج أداء عالي (استخدم SpaCy)</li>
-                    <li>التطبيقات الإنتاجية التي تحتاج سرعة (استخدم مكتبات مخصصة)</li>
-                    <li>مهام NLP معقدة جداً (استخدم Transformers)</li>
-                </ul>
-            </div>
-
-            <div class="info-box">
-                <h3>📊 مقارنة مع مكتبات أخرى</h3>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>المكتبة</th>
-                            <th>الأفضل لـ</th>
-                            <th>السرعة</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>TextBlob</td>
-                            <td>المبتدئين والـ Prototyping</td>
-                            <td>بطيئة</td>
-                        </tr>
-                        <tr>
-                            <td>SpaCy</td>
-                            <td>الإنتاج والتطبيقات الكبيرة</td>
-                            <td>سريعة جداً</td>
-                        </tr>
-                        <tr>
-                            <td>NLTK</td>
-                            <td>البحث الأكاديمي والتعليم</td>
-                            <td>متوسطة</td>
-                        </tr>
-                        <tr>
-                            <td>Transformers</td>
-                            <td>مهام NLP المتقدمة</td>
-                            <td>تعتمد على GPU</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- الخلاصة النهائية -->
-        <section class="section">
-            <h2>🎓 الخلاصة النهائية</h2>
-
-            <div class="success-box">
-                <h3>✅ ما تعلمناه من المشروع:</h3>
-                <ol>
-                    <li><strong>Fine-tuning أفضل من التدريب من الصفر</strong> عندما تكون البيانات محدودة</li>
-                    <li><strong>النماذج المدربة مسبقاً</strong> تحتوي على معرفة لغوية قيمة</li>
-                    <li><strong>جودة الـ Tokenizer</strong> تؤثر بشكل كبير على النتائج</li>
-                    <li><strong>Subword Tokenization</strong> أفضل من Word-level للنماذج الحديثة</li>
-                    <li><strong>Text Generation صعب</strong> ويحتاج بيانات ضخمة للتدريب من الصفر</li>
-                </ol>
-            </div>
-
-            <div class="info-box">
-                <h3>📈 التحسينات الممكنة:</h3>
-                <ul>
-                    <li>استخدام نماذج أكبر (GPT-2 Medium أو Large)</li>
-                    <li>زيادة عدد الـ Training samples</li>
-                    <li>تطبيق Data Augmentation</li>
-                    <li>استخدام Beam Search بدلاً من Sampling</li>
-                    <li>إضافة Conversation History للسياق</li>
-                </ul>
-            </div>
-
-            <div class="warning-box">
-                <h3>⚠️ النقاط المهمة للمناقشة:</h3>
-                <ul>
-                    <li>لماذا فشل النموذج الأول وكيف يمكن تحسينه</li>
-                    <li>الفرق بين Encoder-Decoder (Transformer) و Decoder-only (GPT)</li>
-                    <li>أهمية الـ Pre-training في NLP</li>
-                    <li>كيف يعمل Attention Mechanism</li>
-                    <li>معنى Perplexity وكيف نقيس جودة النموذج</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- قسم Old Tasks -->
-        <section class="section" id="old-tasks">
-            <h2>📚 Old Tasks - المهام السابقة</h2>
-
-            <div class="info-box">
-                <p><strong>💡 ملحوظة:</strong> القسم دا فيه شرح تفصيلي للمهام السابقة اللي اتعملت على مكتبة TextBlob</p>
-                <p>دا للمراجعة والفهم الشامل للمكتبة وإمكانياتها</p>
-            </div>
-
-            <!-- Task 1: Syntax Features -->
-            <h3>🔤 Task 1: Syntax Features in TextBlob</h3>
-
-            <div class="info-box">
-                <h4>ما هي الـ Syntax Features؟</h4>
-                <p>الـ Syntax Features هي مجموعة من الأدوات لفهم <strong>التركيب النحوي</strong> والعلاقات اللغوية في
-                    النص</p>
-                <p>بتساعدنا نحلل الجمل وكلماتها ونفهم دور كل كلمة في الجملة</p>
-            </div>
-
-            <h4>1️⃣ Tokenization (التقسيم)</h4>
-            <div class="code-block">
-                <code>from textblob import TextBlob
-
-text = "TextBlob is amazing! It helps with NLP tasks."
-blob = TextBlob(text)
-
-# تقسيم لجمل
-sentences = blob.sentences
-print(sentences)
-# Output: [Sentence('TextBlob is amazing!'), 
-#          Sentence('It helps with NLP tasks.')]
-
-# تقسيم لكلمات
-words = blob.words
-print(words)
-# Output: WordList(['TextBlob', 'is', 'amazing', 'It', 
-#                   'helps', 'with', 'NLP', 'tasks'])</code>
-            </div>
-
-            <div class="success-box">
-                <p><strong>💡 الفائدة:</strong></p>
-                <ul>
-                    <li><strong>blob.sentences:</strong> يقسم النص لجمل منفصلة</li>
-                    <li><strong>blob.words:</strong> يقسم النص لكلمات (tokens)</li>
-                    <li>أساسي لأي معالجة للنصوص</li>
-                </ul>
-            </div>
-
-            <h4>2️⃣ Part-of-Speech (POS) Tagging (تحديد نوع الكلمة)</h4>
-            <div class="code-block">
-                <code>blob = TextBlob("Python is a powerful programming language")
-
-# الحصول على الـ POS tags
-tags = blob.tags
-print(tags)
-
-# Output:
-# [('Python', 'NNP'),      # Proper Noun (اسم علم)
-#  ('is', 'VBZ'),           # Verb (فعل)
-#  ('a', 'DT'),             # Determiner (أداة)
-#  ('powerful', 'JJ'),      # Adjective (صفة)
-#  ('programming', 'NN'),   # Noun (اسم)
-#  ('language', 'NN')]      # Noun (اسم)</code>
-            </div>
-
-            <div class="info-box">
-                <h4>📋 Penn Treebank Tags الشائعة:</h4>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>Tag</th>
-                            <th>المعنى</th>
-                            <th>مثال</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>NN</strong></td>
-                            <td>Noun, singular (اسم مفرد)</td>
-                            <td>cat, dog, book</td>
-                        </tr>
-                        <tr>
-                            <td><strong>NNS</strong></td>
-                            <td>Noun, plural (اسم جمع)</td>
-                            <td>cats, dogs, books</td>
-                        </tr>
-                        <tr>
-                            <td><strong>NNP</strong></td>
-                            <td>Proper noun (اسم علم)</td>
-                            <td>Python, Egypt, John</td>
-                        </tr>
-                        <tr>
-                            <td><strong>VB</strong></td>
-                            <td>Verb, base form (فعل أصلي)</td>
-                            <td>run, eat, go</td>
-                        </tr>
-                        <tr>
-                            <td><strong>VBD</strong></td>
-                            <td>Verb, past tense (فعل ماضي)</td>
-                            <td>ran, ate, went</td>
-                        </tr>
-                        <tr>
-                            <td><strong>VBG</strong></td>
-                            <td>Verb, gerund (فعل مستمر)</td>
-                            <td>running, eating, going</td>
-                        </tr>
-                        <tr>
-                            <td><strong>JJ</strong></td>
-                            <td>Adjective (صفة)</td>
-                            <td>big, beautiful, fast</td>
-                        </tr>
-                        <tr>
-                            <td><strong>RB</strong></td>
-                            <td>Adverb (ظرف)</td>
-                            <td>quickly, very, well</td>
-                        </tr>
-                        <tr>
-                            <td><strong>DT</strong></td>
-                            <td>Determiner (أداة تعريف)</td>
-                            <td>the, a, an</td>
-                        </tr>
-                        <tr>
-                            <td><strong>PRP</strong></td>
-                            <td>Personal pronoun (ضمير)</td>
-                            <td>I, you, he, she</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <p><strong>💡 الفائدة:</strong> معرفة نوع كل كلمة يساعد في:</p>
-                <ul>
-                    <li>الـ Lemmatization الصحيح (كل نوع له طريقة)</li>
-                    <li>فهم بناء الجملة</li>
-                    <li>استخراج معلومات محددة (مثلاً كل الأفعال أو الأسماء)</li>
-                </ul>
-            </div>
-
-            <h4>3️⃣ Noun Phrase Extraction (استخراج العبارات الاسمية)</h4>
-            <div class="code-block">
-                <code>blob = TextBlob("The beautiful garden has many colorful flowers")
-
-noun_phrases = blob.noun_phrases
-print(noun_phrases)
-
-# Output: WordList(['beautiful garden', 'colorful flowers'])</code>
-            </div>
-
-            <div class="success-box">
-                <p><strong>💡 الفائدة:</strong></p>
-                <ul>
-                    <li>يستخرج <strong>العبارات الاسمية</strong> (مجموعة كلمات تعمل كاسم واحد)</li>
-                    <li>مفيد جداً في <strong>استخراج المفاهيم الرئيسية</strong></li>
-                    <li>أفضل من استخراج الكلمات المفردة</li>
-                </ul>
-            </div>
-
-            <h4>4️⃣ Word Inflection & Lemmatization (التصريف والتجذير)</h4>
-            <div class="code-block">
-                <code>from textblob import Word
-
-# Singularize (تحويل للمفرد)
-word = Word("cats")
-print(word.singularize())  # Output: cat
-
-word = Word("children")
-print(word.singularize())  # Output: child
-
-# Pluralize (تحويل للجمع)
-word = Word("cat")
-print(word.pluralize())  # Output: cats
-
-# Lemmatization (التجذير)
-word = Word("running")
-print(word.lemmatize("v"))  # Output: run (v = verb)
-
-word = Word("better")
-print(word.lemmatize("a"))  # Output: good (a = adjective)</code>
-            </div>
-
-            <div class="warning-box">
-                <p><strong>⚠️ ملحوظة مهمة:</strong></p>
-                <p>الـ Lemmatization يحتاج معرفة نوع الكلمة (POS tag) لنتيجة صحيحة:</p>
-                <ul>
-                    <li><code>lemmatize("v")</code> للأفعال (verbs)</li>
-                    <li><code>lemmatize("n")</code> للأسماء (nouns) - default</li>
-                    <li><code>lemmatize("a")</code> للصفات (adjectives)</li>
-                    <li><code>lemmatize("r")</code> للظروف (adverbs)</li>
-                </ul>
-            </div>
-
-            <h4>5️⃣ Sentence Parsing (تحليل بنية الجملة)</h4>
-            <div class="code-block">
-                <code>blob = TextBlob("The cat sat on the mat")
-
-# عرض الـ parse tree
-print(blob.parse())
-
-# Output:
-# (S
-#   (NP The/DT cat/NN)
-#   (VP sat/VBD
-#     (PP on/IN
-#       (NP the/DT mat/NN))))</code>
-            </div>
-
-            <div class="info-box">
-                <p><strong>💡 الفائدة:</strong></p>
-                <ul>
-                    <li>يعرض <strong>شجرة التحليل النحوي</strong> (Parse Tree)</li>
-                    <li>يوضح العلاقات بين الكلمات</li>
-                    <li>NP = Noun Phrase, VP = Verb Phrase, PP = Prepositional Phrase</li>
-                </ul>
-            </div>
-
-            <h4>6️⃣ Word Count & Frequency (عد الكلمات وتكرارها)</h4>
-            <div class="code-block">
-                <code>from collections import Counter
-
-blob = TextBlob("the cat and the dog and the bird")
-
-# عد تكرار الكلمات
-word_freq = Counter(blob.words)
-print(word_freq)
-
-# Output: Counter({'the': 3, 'and': 2, 'cat': 1, 'dog': 1, 'bird': 1})
-
-# أكثر 3 كلمات تكراراً
-print(word_freq.most_common(3))
-# Output: [('the', 3), ('and', 2), ('cat', 1)]</code>
-            </div>
-
-            <h4>7️⃣ Word and Sentence Properties (خصائص النص)</h4>
-            <div class="code-block">
-                <code>blob = TextBlob("I love Python. Python is great for data science.")
-
-# عدد الجمل
-num_sentences = len(blob.sentences)
-print(f"Number of sentences: {num_sentences}")  # Output: 2
-
-# عدد الكلمات
-num_words = len(blob.words)
-print(f"Number of words: {num_words}")  # Output: 10
-
-# متوسط طول الجملة
-avg_length = num_words / num_sentences
-print(f"Average sentence length: {avg_length:.2f} words")  # Output: 5.00</code>
-            </div>
-
-            <!-- Task 2: Morphology -->
-            <h3>🔬 Task 2: Morphology in TextBlob</h3>
-
-            <div class="info-box">
-                <h4>ما هي Morphology (علم الصرف)؟</h4>
-                <p><strong>Morphology</strong> هو دراسة <strong>بنية وتكوين الكلمات</strong></p>
-                <p>في TextBlob، بنتعامل مع Morphology من خلال:</p>
-                <ul>
-                    <li><strong>Lemmatization:</strong> إرجاع الكلمة لأصلها في القاموس</li>
-                    <li><strong>Stemming:</strong> قص الكلمة لجذرها (بدون استخدام قاموس)</li>
-                </ul>
-            </div>
-
-            <h4>🔄 Flowchart للتحليل الصرفي:</h4>
-            <div class="code-block">
-                <code>1. Raw Text Input
-   ↓
-2. Word Tokenization (تقسيم لكلمات)
-   ↓
-3. POS Tagging (تحديد نوع الكلمة)
-   ↓
-4. Lemmatization / Stemming (التجذير)
-   ↓
-5. Processed Text Output</code>
-            </div>
-
-            <h4>📝 مثال عملي كامل:</h4>
-            <div class="code-block">
-                <code>from textblob import TextBlob, Word
-
-# 1. Raw Text
-text = "The cats were running quickly towards the mice"
-blob = TextBlob(text)
-
-# 2. Tokenization
-words = blob.words
-print("Words:", words)
-# Output: ['The', 'cats', 'were', 'running', 'quickly', 'towards', 'the', 'mice']
-
-# 3. POS Tagging
-tags = blob.tags
-print("\nPOS Tags:", tags)
-# Output: [('The', 'DT'), ('cats', 'NNS'), ('were', 'VBD'), 
-#          ('running', 'VBG'), ('quickly', 'RB'), ...]
-
-# 4. Lemmatization based on POS
-lemmatized = []
-for word, pos in blob.tags:
-    word_obj = Word(word.lower())
-    
-    # تحديد نوع الكلمة للـ lemmatization
-    if pos.startswith('V'):  # Verb
-        lemma = word_obj.lemmatize('v')
-    elif pos.startswith('N'):  # Noun
-        lemma = word_obj.lemmatize('n')
-    elif pos.startswith('J'):  # Adjective
-        lemma = word_obj.lemmatize('a')
-    elif pos.startswith('R'):  # Adverb
-        lemma = word_obj.lemmatize('r')
-    else:
-        lemma = word_obj.lemmatize()
-    
-    lemmatized.append(lemma)
-
-print("\nLemmatized:", lemmatized)
-# Output: ['the', 'cat', 'be', 'run', 'quickly', 'towards', 'the', 'mouse']
-
-# 5. Processed Text
-processed_text = ' '.join(lemmatized)
-print("\nProcessed:", processed_text)
-# Output: the cat be run quickly towards the mouse</code>
-            </div>
-
-            <div class="success-box">
-                <h4>🆚 Lemmatization vs Stemming:</h4>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>الميزة</th>
-                            <th>Lemmatization</th>
-                            <th>Stemming</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>التعريف</strong></td>
-                            <td>إرجاع الكلمة لأصلها في القاموس</td>
-                            <td>قص الكلمة لجذرها الأساسي</td>
-                        </tr>
-                        <tr>
-                            <td><strong>يستخدم قاموس؟</strong></td>
-                            <td>✅ نعم (WordNet)</td>
-                            <td>❌ لا</td>
-                        </tr>
-                        <tr>
-                            <td><strong>يحتاج POS؟</strong></td>
-                            <td>✅ نعم (للدقة)</td>
-                            <td>❌ لا</td>
-                        </tr>
-                        <tr>
-                            <td><strong>النتيجة</strong></td>
-                            <td>كلمة صحيحة في القاموس</td>
-                            <td>قد لا تكون كلمة حقيقية</td>
-                        </tr>
-                        <tr>
-                            <td><strong>السرعة</strong></td>
-                            <td>⚠️ أبطأ</td>
-                            <td>✅ أسرع</td>
-                        </tr>
-                        <tr>
-                            <td><strong>الدقة</strong></td>
-                            <td>✅ أعلى</td>
-                            <td>⚠️ أقل</td>
-                        </tr>
-                        <tr>
-                            <td><strong>مثال</strong></td>
-                            <td>running → run<br>better → good</td>
-                            <td>running → run<br>better → better</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="warning-box">
-                <p><strong>⚠️ ملحوظة:</strong> TextBlob لا يوفر Stemming مباشرة، لكن يمكن استخدامه من خلال NLTK:</p>
-                <div class="code-block">
-                    <code>from nltk.stem import PorterStemmer
-
-stemmer = PorterStemmer()
-word = "running"
-stem = stemmer.stem(word)
-print(stem)  # Output: run</code>
+                <div class="about-image animate-on-scroll">
+                    <div class="image-wrapper">
+                        <img src="https://github.com/xx36Mostafa/digital_portfolioo/blob/main/image.jpg?raw=true"
+                            alt="Profile Picture">
+                    </div>
                 </div>
             </div>
-
-            <!-- Task 3: Vectorization -->
-            <h3>🔢 Task 3: Vectorization using TextBlob</h3>
-
-            <div class="info-box">
-                <h4>ما هو Vectorization؟</h4>
-                <p><strong>Vectorization</strong> هو تحويل النصوص إلى <strong>أرقام (vectors)</strong> لكي تفهمها نماذج
-                    الـ Machine Learning</p>
-                <p>النصوص لازم تتحول لأرقام لأن الـ algorithms مش بتفهم كلمات!</p>
-            </div>
-
-            <h4>📊 أنواع Vectorization:</h4>
-
-            <h5>1️⃣ Count Vectorization (Bag of Words)</h5>
-            <div class="code-block">
-                <code>from sklearn.feature_extraction.text import CountVectorizer
-from textblob import TextBlob
-
-# معالجة النصوص باستخدام TextBlob
-texts = [
-    "I love machine learning",
-    "I love deep learning",
-    "Machine learning is amazing"
-]
-
-# Preprocessing with TextBlob
-processed_texts = []
-for text in texts:
-    blob = TextBlob(text.lower())
-    # Lemmatization
-    words = [Word(word).lemmatize() for word in blob.words]
-    processed_texts.append(' '.join(words))
-
-print("Processed texts:", processed_texts)
-# Output: ['i love machine learning', 
-#          'i love deep learning', 
-#          'machine learning be amazing']
-
-# Count Vectorization
-vectorizer = CountVectorizer()
-X = vectorizer.fit_transform(processed_texts)
-
-print("\nVocabulary:", vectorizer.get_feature_names_out())
-# Output: ['amazing', 'be', 'deep', 'i', 'learning', 'love', 'machine']
-
-print("\nCount Matrix:")
-print(X.toarray())
-# Output:
-# [[0 0 0 1 1 1 1]   # Doc 1: "i love machine learning"
-#  [0 0 1 1 1 1 0]   # Doc 2: "i love deep learning"
-#  [1 1 0 0 1 0 1]]  # Doc 3: "machine learning is amazing"</code>
-            </div>
-
-            <div class="info-box">
-                <p><strong>💡 كيف يعمل Count Vectorization؟</strong></p>
-                <ol>
-                    <li>ينشئ <strong>مفردات (vocabulary)</strong> من كل الكلمات الفريدة</li>
-                    <li>كل document يصبح vector فيه عدد تكرار كل كلمة</li>
-                    <li>الصفر يعني الكلمة غير موجودة</li>
-                </ol>
-
-                <p><strong>⚠️ المشكلة:</strong> الكلمات الشائعة (the, is, a) تحصل على weights عالية!</p>
-            </div>
-
-            <h5>2️⃣ TF-IDF Vectorization</h5>
-            <div class="code-block">
-                <code>from sklearn.feature_extraction.text import TfidfVectorizer
-
-# نفس النصوص المعالجة
-tfidf_vectorizer = TfidfVectorizer()
-X_tfidf = tfidf_vectorizer.fit_transform(processed_texts)
-
-print("TF-IDF Matrix:")
-print(X_tfidf.toarray())
-
-# Output (مثال):
-# [[0.00 0.00 0.00 0.50 0.40 0.50 0.50]
-#  [0.00 0.00 0.63 0.38 0.30 0.38 0.00]
-#  [0.57 0.57 0.00 0.00 0.34 0.00 0.57]]</code>
-            </div>
-
-            <div class="success-box">
-                <h4>📐 TF-IDF Formulas:</h4>
-
-                <p><strong>TF (Term Frequency):</strong></p>
-                <div class="code-block">
-                    <code>TF = (عدد مرات ظهور الكلمة في المستند) / (إجمالي كلمات المستند)</code>
+            <div class="about-cards">
+                <div class="about-card animate-on-scroll">
+                    <h3><i class="fas fa-check-circle"></i> What I Do</h3>
+                    <ul>
+                        <li>AI & Machine Learning Solutions</li>
+                        <li>Web Scraping & Data Extraction</li>
+                        <li>Process Automation</li>
+                        <li>API Development & Integration</li>
+                    </ul>
                 </div>
-
-                <p><strong>IDF (Inverse Document Frequency):</strong></p>
-                <div class="code-block">
-                    <code>IDF = log(إجمالي عدد المستندات / عدد المستندات التي تحتوي الكلمة)</code>
+                <div class="about-card animate-on-scroll">
+                    <h3><i class="fas fa-star"></i> Key Services</h3>
+                    <ul>
+                        <li>Custom Automation Tools</li>
+                        <li>Data Analysis & Visualization</li>
+                        <li>Telegram Bot Development</li>
+                        <li>Desktop & Web Automation</li>
+                    </ul>
                 </div>
+            </div>
+        </div>
+    </section>
 
-                <p><strong>TF-IDF:</strong></p>
-                <div class="code-block">
-                    <code>TF-IDF = TF × IDF</code>
+    <!-- Projects Section -->
+    <section class="projects section" id="projects">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <p class="section-subtitle">Some of my recent work in AI, automation, and data analysis</p>
+            <div class="projects-grid">
+                <div class="project-card animate-on-scroll" style="--project-color: #6366f1;">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <span class="project-date">May 2025 - June 2025</span>
+                    </div>
+                    <h3>Intelligent Product Analytics & Sentiment Engine</h3>
+                    <p>Comprehensive e-commerce intelligence platform that automatically scrapes product data from
+                        multiple sites, performs advanced sentiment analysis using NLP models, and generates actionable
+                        business insights through real-time dashboards.</p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">NLP</span>
+                        <span class="tag">Streamlit</span>
+                        <span class="tag">FastAPI</span>
+                    </div>
+                    <a href="#" class="project-link">View Project <i class="fas fa-arrow-right"></i></a>
                 </div>
-
-                <p><strong>💡 الفكرة:</strong></p>
-                <ul>
-                    <li>الكلمات <strong>الشائعة</strong> (the, is) تحصل على <strong>IDF منخفض</strong></li>
-                    <li>الكلمات <strong>النادرة والمهمة</strong> تحصل على <strong>IDF عالي</strong></li>
-                    <li>النتيجة: weights أفضل تعكس أهمية الكلمة!</li>
-                </ul>
+                <div class="project-card animate-on-scroll" style="--project-color: #10b981;">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-chart-candlestick"></i>
+                        </div>
+                        <span class="project-date">Mar 2025 - May 2025</span>
+                    </div>
+                    <h3>Trading Bot Strategy-Based Automation</h3>
+                    <p>Designed and implemented an automated trading bot using the Mt5 Executor library with actions
+                        based on configurable strategies.</p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Mt5 Executor</span>
+                        <span class="tag">Trading Algorithms</span>
+                        <span class="tag">Automation</span>
+                    </div>
+                    <a href="#" class="project-link">View Project <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="project-card animate-on-scroll" style="--project-color: #f59e0b;">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-horse-head"></i>
+                        </div>
+                        <span class="project-date">Jan 2024 - May 2024</span>
+                    </div>
+                    <h3>Horse Racing Intelligence & ML Platform</h3>
+                    <p>Comprehensive end-to-end platform combining advanced web scraping, data processing, and machine
+                        learning for horse racing analytics. Features intelligent data extraction, automated data
+                        cleaning, ML dataset generation, and predictive modeling.</p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Web Scraping</span>
+                        <span class="tag">Machine Learning</span>
+                        <span class="tag">Data Engineering</span>
+                        <span class="tag">Predictive Analytics</span>
+                    </div>
+                    <a href="#" class="project-link">View Project <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="project-card animate-on-scroll" style="--project-color: #ec4899;">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fab fa-apple"></i>
+                        </div>
+                        <span class="project-date">Feb 2024 - Aug 2024</span>
+                    </div>
+                    <h3>Apple Account Management Tool</h3>
+                    <p>Designed and built Apple account management automation tool that can run HTTP requests to
+                        simulate account creation, password reset, and region changes without browser automation.</p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">HTTP Requests</span>
+                        <span class="tag">Automation</span>
+                        <span class="tag">API Integration</span>
+                    </div>
+                    <a href="#" class="project-link">View Project <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="project-card animate-on-scroll" style="--project-color: #8b5cf6;">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fab fa-twitter"></i>
+                        </div>
+                        <span class="project-date">Recent Project</span>
+                    </div>
+                    <h3>X API Reverse Engineering Specialist</h3>
+                    <p>Comprehensive testing suite for X (Twitter) login flow analysis. Developed advanced tools for HAR
+                        file analysis, TLS client implementation, authentication flow replication, reverse engineering
+                        techniques, and automated tweet publishing tools.</p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Reverse Engineering</span>
+                        <span class="tag">API Analysis</span>
+                        <span class="tag">TLS Client</span>
+                        <span class="tag">Security Testing</span>
+                    </div>
+                    <a href="#" class="project-link">View Project <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="project-card animate-on-scroll" style="--project-color: #06b6d4;">
+                    <div class="project-header">
+                        <div class="project-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <span class="project-date">Mar 2024 - June 2024</span>
+                    </div>
+                    <h3>Smart Home Automation Project</h3>
+                    <p>Designed a smart home system using IoT devices and machine learning for predictive automation
+                        based on user behavior patterns.</p>
+                    <div class="project-tags">
+                        <span class="tag">IoT</span>
+                        <span class="tag">Machine Learning</span>
+                        <span class="tag">Python</span>
+                        <span class="tag">Automation</span>
+                    </div>
+                    <a href="#" class="project-link">View Project <i class="fas fa-arrow-right"></i></a>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <h4>🔄 Complete Vectorization Pipeline:</h4>
-            <div class="code-block">
-                <code>from textblob import TextBlob, Word
-from sklearn.feature_extraction.text import TfidfVectorizer
-import pandas as pd
-
-# مثال كامل
-documents = [
-    "TextBlob is simple and powerful",
-    "I love using TextBlob for NLP",
-    "TextBlob makes NLP tasks easy"
-]
-
-# Step 1: Preprocessing
-def preprocess(text):
-    blob = TextBlob(text.lower())
-    
-    # Tokenization + Lemmatization + POS-aware
-    processed_words = []
-    for word, pos in blob.tags:
-        word_obj = Word(word)
-        
-        if pos.startswith('V'):
-            lemma = word_obj.lemmatize('v')
-        elif pos.startswith('N'):
-            lemma = word_obj.lemmatize('n')
-        else:
-            lemma = word_obj.lemmatize()
-        
-        processed_words.append(lemma)
-    
-    return ' '.join(processed_words)
-
-# تطبيق Preprocessing
-processed_docs = [preprocess(doc) for doc in documents]
-print("Processed Documents:")
-for i, doc in enumerate(processed_docs, 1):
-    print(f"{i}. {doc}")
-
-# Step 2: TF-IDF Vectorization
-vectorizer = TfidfVectorizer()
-tfidf_matrix = vectorizer.fit_transform(processed_docs)
-
-# Step 3: عرض النتائج
-feature_names = vectorizer.get_feature_names_out()
-df = pd.DataFrame(
-    tfidf_matrix.toarray(),
-    columns=feature_names,
-    index=[f'Doc{i+1}' for i in range(len(documents))]
-)
-
-print("\nTF-IDF Matrix:")
-print(df.round(3))</code>
+    <!-- Skills Section -->
+    <section class="skills section" id="skills">
+        <div class="container">
+            <h2 class="section-title">My Skills</h2>
+            <div class="skills-grid">
+                <div class="skill-card animate-on-scroll" style="--card-color: #6366f1;">
+                    <div class="skill-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI & Machine Learning</h3>
+                    <ul>
+                        <li>Data Preprocessing & Cleaning</li>
+                        <li>Model Training & Evaluation</li>
+                        <li>Scikit-learn, TensorFlow, Deep Learning APIs</li>
+                        <li>OpenCV, Data Augmentation</li>
+                    </ul>
+                </div>
+                <div class="skill-card animate-on-scroll" style="--card-color: #10b981;">
+                    <div class="skill-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <i class="fas fa-spider"></i>
+                    </div>
+                    <h3>Web Scraping & API Integration</h3>
+                    <ul>
+                        <li>BeautifulSoup, Selenium, Requests</li>
+                        <li>AJAX & JavaScript-heavy sites</li>
+                        <li>HTTP Requests, FastAPI</li>
+                        <li>Telegram Bots Automation</li>
+                    </ul>
+                </div>
+                <div class="skill-card animate-on-scroll" style="--card-color: #f59e0b;">
+                    <div class="skill-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Desktop & Web Automation</h3>
+                    <ul>
+                        <li>PyAutoGUI, Pywinuto</li>
+                        <li>UIAutomation (Windows)</li>
+                        <li>Selenium & Playwright</li>
+                        <li>Browser Integration</li>
+                    </ul>
+                </div>
+                <div class="skill-card animate-on-scroll" style="--card-color: #ec4899;">
+                    <div class="skill-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Data Processing & Analysis</h3>
+                    <ul>
+                        <li>Pandas, NumPy</li>
+                        <li>Data Cleaning, Boolean Filtering</li>
+                        <li>Grouping, Aggregation</li>
+                        <li>Real-Time Visualization (Streamlit)</li>
+                    </ul>
+                </div>
+                <div class="skill-card animate-on-scroll" style="--card-color: #8b5cf6;">
+                    <div class="skill-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Programming & Scripting</h3>
+                    <ul>
+                        <li>Python (Professional)</li>
+                        <li>Java (Professional)</li>
+                        <li>Node.js (Professional)</li>
+                        <li>C++ (Professional)</li>
+                    </ul>
+                </div>
+                <div class="skill-card animate-on-scroll" style="--card-color: #06b6d4;">
+                    <div class="skill-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Tools & Platforms</h3>
+                    <ul>
+                        <li>Git & GitHub</li>
+                        <li>Microsoft Office Suite</li>
+                        <li>Frida (Mobile Reverse Engineering)</li>
+                        <li>Various Development Tools</li>
+                    </ul>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <h4>📊 مقارنة طرق Vectorization:</h4>
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>الطريقة</th>
-                        <th>الفكرة</th>
-                        <th>المميزات</th>
-                        <th>العيوب</th>
-                        <th>الاستخدام</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Bag of Words (Count)</strong></td>
-                        <td>عد تكرار الكلمات</td>
-                        <td>• بسيط<br>• سريع<br>• سهل الفهم</td>
-                        <td>• يتجاهل الترتيب<br>• يتجاهل السياق<br>• Stop words عالية</td>
-                        <td>Classification بسيط</td>
-                    </tr>
-                    <tr>
-                        <td><strong>TF-IDF</strong></td>
-                        <td>وزن حسب الأهمية</td>
-                        <td>• يقلل Stop words<br>• يبرز كلمات مهمة<br>• أفضل من Count</td>
-                        <td>• يتجاهل الترتيب<br>• يتجاهل السياق<br>• Sparse matrix</td>
-                        <td>Information Retrieval<br>Document Classification</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Word Embeddings</strong></td>
-                        <td>Dense vectors بسياق</td>
-                        <td>• يحفظ السياق<br>• يفهم التشابه<br>• Dense vectors</td>
-                        <td>• معقد<br>• يحتاج تدريب<br>• أبطأ</td>
-                        <td>Deep Learning<br>Semantic Tasks</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="warning-box">
-                <h4>⚠️ متى نستخدم أي طريقة؟</h4>
-                <ul>
-                    <li><strong>Count Vectorization:</strong> مشاريع بسيطة، classification سريع</li>
-                    <li><strong>TF-IDF:</strong> Information retrieval، document similarity</li>
-                    <li><strong>Word Embeddings:</strong> Deep learning، semantic understanding</li>
-                </ul>
-
-                <p><strong>💡 في مشروعنا (Chatbot):</strong></p>
-                <p>استخدمنا <strong>Word Embeddings</strong> لأنها:</p>
-                <ul>
-                    <li>تحفظ <strong>السياق</strong></li>
-                    <li>تفهم <strong>المعنى</strong></li>
-                    <li>مناسبة لـ <strong>Sequence Generation</strong></li>
-                </ul>
+    <!-- Experience Section -->
+    <section class="experience section" id="experience">
+        <div class="container">
+            <h2 class="section-title">Work Experience</h2>
+            <p class="section-subtitle">My professional journey in AI and automation engineering</p>
+            <div class="timeline">
+                <div class="timeline-item animate-on-scroll">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">Sep 2024 - Present</div>
+                        <h3>HTML Parser & ML Engineering</h3>
+                        <h4>UNSEND App</h4>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Remote</p>
+                        <ul>
+                            <li>Developing advanced HTML parsing systems and integrating AI/LLM technologies for
+                                automated data processing and extraction</li>
+                            <li>Training language models (LM) to enhance text analysis capabilities</li>
+                            <li>Processing large-scale HTML documents with custom parsing algorithms</li>
+                            <li>Integrating LLM and API services for intelligent data processing</li>
+                            <li>Building scalable automation workflows for data extraction</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item animate-on-scroll">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">Jan 2022 - Present</div>
+                        <h3>AI & Automation Engineer | Web Scraper Expert</h3>
+                        <h4><a href="https://www.upwork.com/freelancers/mostafanasser" target="_blank">Freelance /
+                                Remote - Upwork</a></h4>
+                        <p class="location"><i class="fas fa-map-marker-alt"></i> Remote</p>
+                        <ul>
+                            <li>Specialized in building intelligent automation systems and advanced web scraping
+                                solutions for international clients</li>
+                            <li>Developed advanced web scraping solutions using Python, Selenium, BeautifulSoup</li>
+                            <li>Built scalable automation pipelines with FastAPI and database integration</li>
+                            <li>Created intelligent Telegram bots and desktop automation tools</li>
+                            <li>Delivered 50+ successful projects with 100% client satisfaction</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <!-- Summary -->
-            <h3>📋 الخلاصة العامة - Old Tasks</h3>
-
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>Task</th>
-                        <th>الهدف</th>
-                        <th>الأدوات المستخدمة</th>
-                        <th>الفائدة</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><strong>Syntax Features</strong></td>
-                        <td>فهم التركيب النحوي</td>
-                        <td>• Tokenization<br>• POS Tagging<br>• Noun Phrases<br>• Parsing</td>
-                        <td>تحليل بنية الجملة<br>استخراج معلومات نحوية</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Morphology</strong></td>
-                        <td>فهم بنية الكلمات</td>
-                        <td>• Lemmatization<br>• Stemming<br>• Word Inflection</td>
-                        <td>إرجاع الكلمات لأصلها<br>تقليل المفردات</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Vectorization</strong></td>
-                        <td>تحويل النص لأرقام</td>
-                        <td>• Count Vectorizer<br>• TF-IDF<br>• (Word Embeddings)</td>
-                        <td>تجهيز البيانات<br>للـ ML models</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="success-box">
-                <h4>🎯 العلاقة بمشروع الـ Chatbot:</h4>
-                <ul>
-                    <li><strong>Syntax:</strong> استخدمنا Tokenization في معالجة البيانات</li>
-                    <li><strong>Morphology:</strong> استخدمنا preprocessing لتنظيف النصوص</li>
-                    <li><strong>Vectorization:</strong> استخدمنا Embeddings (أفضل من TF-IDF للـ generation)</li>
-                </ul>
-
-                <p><strong>💡 الفرق الرئيسي:</strong></p>
-                <p>TextBlob مناسب لـ <strong>تحليل النصوص والـ Classification</strong></p>
-                <p>لكن لـ <strong>Text Generation</strong>، نحتاج نماذج أقوى (Transformers، GPT-2)</p>
+    <!-- Contact Section -->
+    <section class="contact section" id="contact">
+        <div class="container">
+            <h2 class="section-title">Let's Work Together</h2>
+            <p class="contact-subtitle">I'm always interested in new opportunities and exciting projects. Let's discuss
+                how we can work together!
+            </p>
+            <div class="contact-cards">
+                <div class="contact-card animate-on-scroll" data-clipboard="mostafanasser3786@gmail.com">
+                    <div class="contact-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>Email</h3>
+                    <p>mostafanasser3786@gmail.com</p>
+                    <button class="copy-btn">Copy <i class="fas fa-copy"></i></button>
+                </div>
+                <div class="contact-card animate-on-scroll" data-clipboard="Giza, Egypt">
+                    <div class="contact-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>Location</h3>
+                    <p>Giza, Egypt</p>
+                    <button class="copy-btn">Copy <i class="fas fa-copy"></i></button>
+                </div>
+                <div class="contact-card animate-on-scroll" data-clipboard="+201098974486">
+                    <div class="contact-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <h3>Phone & WhatsApp</h3>
+                    <p>+20 109 897 4486</p>
+                    <button class="copy-btn">Copy <i class="fas fa-copy"></i></button>
+                </div>
             </div>
-
-            <div class="info-box">
-                <h4>📚 المراجع:</h4>
-                <ul>
-                    <li>TextBlob Official Documentation</li>
-                    <li>NLTK Library</li>
-                    <li>Scikit-learn Documentation</li>
-                    <li>Penn Treebank POS Tags</li>
-                    <li>WordNet Lemmatizer</li>
-                </ul>
+            <div class="social-links-contact">
+                <a href="https://github.com/mostafanasser" target="_blank" class="social-icon" aria-label="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://linkedin.com/in/mostafanasser" target="_blank" class="social-icon"
+                    aria-label="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://www.upwork.com/freelancers/mostafanasser" target="_blank" class="social-icon"
+                    aria-label="Upwork">
+                    <i class="fas fa-briefcase"></i>
+                </a>
+                <a href="mailto:mostafanasser3786@gmail.com" class="social-icon" aria-label="Email">
+                    <i class="fas fa-envelope"></i>
+                </a>
             </div>
-        </section>
+        </div>
+    </section>
 
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; <span id="currentYear"></span> Mustafa Nasser Anwar. All rights reserved.</p>
+        </div>
+    </footer>
 
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
+    <!-- Floating Contact Button -->
+    <a href="https://wa.me/201098974486" class="floating-contact" aria-label="Contact on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
 
-        <footer>
-            <p>🚀 تم إنشاء هذا التوثيق لمشروع Text Generation</p>
-            <p style="margin-top: 0.5rem;">📅 ديسمبر 2025</p>
-        </footer>
-    </div>
-
-    <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('nav a').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            });
-        });
-
-        // Add animation on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.section').forEach(section => {
-            observer.observe(section);
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
